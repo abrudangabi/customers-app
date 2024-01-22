@@ -1,21 +1,32 @@
 package com.customer.data.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import org.apache.catalina.util.CustomObjectInputStream;
 
 @Entity
 public class Address {
 
     @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column
     private String country;
 
+    @Column
     private String city;
 
+    @Column
     private String street;
 
+    @Column
     private String houseNumber;
 
+    @Column
     private String postalCode;
+
+    @OneToOne(mappedBy = "currentLivingAddress")
+    private Customer customer;
 
     public String getCountry() {
         return country;

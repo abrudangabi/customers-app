@@ -1,31 +1,34 @@
 package com.customer.data.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class Customer {
 
     @Id
-    private Integer id;
+    private Long id;
 
+    @Column(nullable = false)
     private String firstName;
 
+    @Column(nullable = false)
     private String lastName;
 
+    @Column
     private String email;
 
+    @Column
     private Integer age;
 
     @OneToOne
+    @JoinColumn(name = "address_id")
     private Address currentLivingAddress;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
