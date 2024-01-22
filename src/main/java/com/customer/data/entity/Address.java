@@ -1,5 +1,6 @@
 package com.customer.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.apache.catalina.util.CustomObjectInputStream;
 
@@ -7,7 +8,7 @@ import org.apache.catalina.util.CustomObjectInputStream;
 public class Address {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
 
     @Column
@@ -26,7 +27,19 @@ public class Address {
     private String postalCode;
 
     @OneToOne(mappedBy = "currentLivingAddress")
+    @JsonIgnore
     private Customer customer;
+
+    public Address(String country, String city, String street, String houseNumber, String postalCode) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+        this.houseNumber = houseNumber;
+        this.postalCode = postalCode;
+    }
+
+    public Address() {
+    }
 
     public String getCountry() {
         return country;
@@ -66,5 +79,33 @@ public class Address {
 
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "id=" + id +
+                ", country='" + country + '\'' +
+                ", city='" + city + '\'' +
+                ", street='" + street + '\'' +
+                ", houseNumber='" + houseNumber + '\'' +
+                ", postalCode='" + postalCode + '\'' +
+                '}';
     }
 }

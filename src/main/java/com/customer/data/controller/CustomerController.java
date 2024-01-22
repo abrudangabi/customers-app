@@ -2,9 +2,7 @@ package com.customer.data.controller;
 
 import com.customer.data.entity.Customer;
 import com.customer.data.service.CustomerService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,7 +21,22 @@ public class CustomerController {
     }
 
     @PostMapping("/add")
-    public Customer retrieveAll() {
-        return this.customerService.getAll();
+    public Customer add(@RequestBody Customer customer) {
+        return this.customerService.addCustomer(customer);
     }
+
+//    @GetMapping("retrieve-by/{id}")
+//    public Customer retrieveById(@PathVariable Long id) {
+//        return new Customer();
+//    }
+//
+//    @PutMapping("")
+//    public void update() {
+//        //
+//    }
+//
+//    @GetMapping("")
+//    public Customer searchByFirstOrLastName(@RequestParam String name) {
+//        return new Customer();
+//    }
 }

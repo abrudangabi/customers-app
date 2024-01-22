@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 public class Customer {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false)
@@ -21,8 +22,18 @@ public class Customer {
     private Integer age;
 
     @OneToOne
-    @JoinColumn(name = "address_id")
+    @JoinColumn(name = "address_id", nullable = true)
     private Address currentLivingAddress;
+
+    public Customer(String firstName, String lastName, String email, Integer age) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.age = age;
+    }
+
+    public Customer() {
+    }
 
     public Long getId() {
         return id;
@@ -69,6 +80,19 @@ public class Customer {
     }
 
     public void setCurrentLivingAddress(Address currentLivingAddress) {
+//        currentLivingAddress.setCustomer(this);
         this.currentLivingAddress = currentLivingAddress;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", age=" + age +
+                ", currentLivingAddress=" + currentLivingAddress +
+                '}';
     }
 }
