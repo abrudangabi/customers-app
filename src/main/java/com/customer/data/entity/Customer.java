@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 public class Customer {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue
     private Long id;
 
     @Column(nullable = false)
@@ -21,7 +21,7 @@ public class Customer {
     @Column
     private Integer age;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "address_id", nullable = true)
     private Address currentLivingAddress;
 

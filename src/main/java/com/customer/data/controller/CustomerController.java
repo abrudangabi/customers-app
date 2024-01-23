@@ -1,12 +1,15 @@
 package com.customer.data.controller;
 
 import com.customer.data.entity.Customer;
+import com.customer.data.request.CustomerRequest;
 import com.customer.data.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("customers")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -15,13 +18,13 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping("/retrieve-all")
+    @GetMapping
     public List<Customer> retrieveAll() {
         return this.customerService.getAll();
     }
 
-    @PostMapping("/add")
-    public Customer add(@RequestBody Customer customer) {
+    @PostMapping
+    public Customer add(@RequestBody CustomerRequest customer) {
         return this.customerService.addCustomer(customer);
     }
 

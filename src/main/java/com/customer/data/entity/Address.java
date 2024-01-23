@@ -8,7 +8,7 @@ import org.apache.catalina.util.CustomObjectInputStream;
 public class Address {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue
     private Long id;
 
     @Column

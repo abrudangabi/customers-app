@@ -33,15 +33,12 @@ class LoadDatabase {
             Address a3 = new Address("Rom", "Iasi", "Musatini", "5", "440077");
             c3.setCurrentLivingAddress(a3);
 
-            addressRepositoryJpa.save(a1);
-            addressRepositoryJpa.save(a2);
-            addressRepositoryJpa.save(a3);
-            a1.setCustomer(c1);
-            a2.setCustomer(c2);
-            a3.setCustomer(c3);
+            Customer c4 = new Customer("Mircea", "Ab", "gabi@yahoo.com", 27);
+
             log.info("Preloading " + customerRepositoryJpa.save(c1));
             log.info("Preloading " + customerRepositoryJpa.save(c2));
             log.info("Preloading " + customerRepositoryJpa.save(c3));
+            log.info("Preloading " + customerRepositoryJpa.save(c4));
         };
     }
 }
