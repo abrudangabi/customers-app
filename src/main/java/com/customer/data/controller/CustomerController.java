@@ -1,9 +1,12 @@
 package com.customer.data.controller;
 
 import com.customer.data.entity.Customer;
+import com.customer.data.exception.CustomerValidationException;
 import com.customer.data.request.CustomerRequest;
 import com.customer.data.service.CustomerService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,27 +22,27 @@ public class CustomerController {
     }
 
     @GetMapping
-    public List<Customer> retrieveAll() {
-        return this.customerService.getAll();
+    public ResponseEntity retrieveAll() {
+        return new ResponseEntity(this.customerService.getAll(), HttpStatus.OK);
     }
 
     @PostMapping
-    public Customer addCustomer(@RequestBody CustomerRequest customer) {
-        return this.customerService.addCustomer(customer);
+    public ResponseEntity addCustomer(@RequestBody CustomerRequest customer) throws CustomerValidationException {
+        return new ResponseEntity(this.customerService.addCustomer(customer), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Customer retrieveById(@PathVariable Long id) {
-        return this.customerService.getCustomerById(id);
+    public ResponseEntity retrieveById(@PathVariable Long id) {
+        return new ResponseEntity(this.customerService.getCustomerById(id), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public Customer update(@RequestBody CustomerRequest customerRequest) {
-        return this.customerService.updateCustomer(customerRequest);
+    public ResponseEntity update(@RequestBody @Valid CustomerRequest customerRequest) throws CustomerValidationException {
+        return new ResponseEntity(this.customerService.updateCustomer(customerRequest), HttpStatus.OK);
     }
 
     @GetMapping("/name/{name}")
-    public List<Customer> searchByFirstOrLastName(@PathVariable String name) {
-        return this.customerService.getCustomerByName(name);
+    public ResponseEntity searchByFirstOrLastName(@PathVariable String name) {
+        return new ResponseEntity(this.customerService.getCustomerByName(name), HttpStatus.OK);
     }
 }
