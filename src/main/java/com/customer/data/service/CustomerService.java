@@ -4,9 +4,11 @@ import com.customer.data.entity.Address;
 import com.customer.data.entity.Customer;
 import com.customer.data.repository.CustomerRepositoryJpa;
 import com.customer.data.request.CustomerRequest;
+import com.customer.data.request.UpdateCustomerRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -35,6 +37,34 @@ public class CustomerService {
             }
         }
         return null;
+    }
+
+    public Customer getCustomerById(Long id) {
+        Optional<Customer> customerOptional = customerRepository.findById(id);
+        return customerOptional.orElse(null);
+    }
+
+    public Customer updateCustomer(CustomerRequest customerRequest) {
+        Customer customer = new Customer(customerRequest.getFirstName(), customerRequest.getLastName(), customerRequest.getEmail(), customerRequest.getAge());
+        Address address = new Address(customerRequest.getCountry(), customerRequest.getCity(), customerRequest.getStreet(),
+                customerRequest.getHouseNumber(), customerRequest.getPostalCode());
+
+        if (!"".equals(customer.getEmail()) && customer.getEmail() != null && addressValidation(address)) {
+            customer.setCurrentLivingAddress(address);
+        } else if (addressValidation(address)) {
+            customer.setCurrentLivingAddress(address);
+        }
+
+        Customer foundCustomer = getCustomerById(customerRequest.getId());
+        foundCustomer.setEmail(customer.getEmail());
+        foundCustomer.setCurrentLivingAddress(address);
+        return customerRepository.save(foundCustomer);
+    }
+
+    public List<Customer> getCustomerByName(String name) {
+        List<Customer> customerList = customerRepository.findByFirstName(name);
+        customerList.addAll(customerRepository.findByLastName(name));
+        return customerList;
     }
 
     private boolean customerValidation(Customer customer) {

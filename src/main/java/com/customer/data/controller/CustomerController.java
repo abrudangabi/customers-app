@@ -24,22 +24,22 @@ public class CustomerController {
     }
 
     @PostMapping
-    public Customer add(@RequestBody CustomerRequest customer) {
+    public Customer addCustomer(@RequestBody CustomerRequest customer) {
         return this.customerService.addCustomer(customer);
     }
 
-//    @GetMapping("retrieve-by/{id}")
-//    public Customer retrieveById(@PathVariable Long id) {
-//        return new Customer();
-//    }
-//
-//    @PutMapping("")
-//    public void update() {
-//        //
-//    }
-//
-//    @GetMapping("")
-//    public Customer searchByFirstOrLastName(@RequestParam String name) {
-//        return new Customer();
-//    }
+    @GetMapping("/{id}")
+    public Customer retrieveById(@PathVariable Long id) {
+        return this.customerService.getCustomerById(id);
+    }
+
+    @PutMapping("/update")
+    public Customer update(@RequestBody CustomerRequest customerRequest) {
+        return this.customerService.updateCustomer(customerRequest);
+    }
+
+    @GetMapping("/name/{name}")
+    public List<Customer> searchByFirstOrLastName(@PathVariable String name) {
+        return this.customerService.getCustomerByName(name);
+    }
 }
