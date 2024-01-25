@@ -1,8 +1,8 @@
 package com.customer.data.request;
 
-public class UpdateCustomerRequest {
+import java.io.Serializable;
 
-    private String email;
+public class AddressRequest implements Serializable {
 
     private String country;
 
@@ -13,10 +13,6 @@ public class UpdateCustomerRequest {
     private String houseNumber;
 
     private String postalCode;
-
-    public String getEmail() {
-        return email;
-    }
 
     public String getCountry() {
         return country;
