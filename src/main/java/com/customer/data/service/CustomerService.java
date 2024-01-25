@@ -4,8 +4,8 @@ import com.customer.data.entity.Address;
 import com.customer.data.entity.Customer;
 import com.customer.data.exception.CustomerValidationException;
 import com.customer.data.repository.CustomerRepositoryJpa;
+import com.customer.data.request.AddressRequest;
 import com.customer.data.request.CustomerRequest;
-import com.customer.data.request.UpdateCustomerRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,19 +25,29 @@ public class CustomerService {
     }
 
     public Customer addCustomer(CustomerRequest customerRequest) throws CustomerValidationException {
-        Customer customer = new Customer(customerRequest.getFirstName(), customerRequest.getLastName(), customerRequest.getEmail(), customerRequest.getAge());
+        Customer customer = new Customer(customerRequest.getFirstName(), customerRequest.getLastName(), "", customerRequest.getAge());
+        String email = customerRequest.getEmail();
+
         if (customerValidation(customer)) {
-            Address address = new Address(customerRequest.getCountry(), customerRequest.getCity(), customerRequest.getStreet(),
-                    customerRequest.getHouseNumber(), customerRequest.getPostalCode());
+            AddressRequest addressRequest = customerRequest.getCurrentLivingAddress();
+
             // If email exists, then the customer is saved without address
-            if (!"".equals(customer.getEmail()) && customer.getEmail() != null) {
-                return customerRepository.save(customer);
-            } else if (addressValidation(address)) {
-                customer.setCurrentLivingAddress(address);
-                return customerRepository.save(customer);
+            if (!"".equals(email) && email != null) {
+                customer.setEmail(email);
+            } else {
+                if (addressRequest == null) {
+                    throw new CustomerValidationException("Both email and address are empty!");
+                } else {
+                    Address address = new Address(customerRequest.getCurrentLivingAddress().getCountry(), customerRequest.getCurrentLivingAddress().getCity(),
+                            customerRequest.getCurrentLivingAddress().getStreet(), customerRequest.getCurrentLivingAddress().getHouseNumber(),
+                            customerRequest.getCurrentLivingAddress().getPostalCode());
+
+                    addressFieldsValidation(address);
+                    customer.setCurrentLivingAddress(address);
+                }
             }
         }
-        return null;
+        return customerRepository.save(customer);
     }
 
     public Customer getCustomerById(Long id) {
@@ -49,15 +59,20 @@ public class CustomerService {
         Customer foundCustomer = getCustomerById(customerRequest.getId());
 
         String email = customerRequest.getEmail();
-        Address address = new Address(customerRequest.getCountry(), customerRequest.getCity(), customerRequest.getStreet(),
-                customerRequest.getHouseNumber(), customerRequest.getPostalCode());
+        AddressRequest addressRequest = customerRequest.getCurrentLivingAddress();
+
 
         if (!"".equals(email)) {
             foundCustomer.setEmail(email);
         } else {
-            if (!addressValidation(address)) {
+            if (addressRequest == null) {
                 throw new CustomerValidationException("Both email and address are empty!");
             } else {
+                Address address = new Address(customerRequest.getCurrentLivingAddress().getCountry(), customerRequest.getCurrentLivingAddress().getCity(),
+                        customerRequest.getCurrentLivingAddress().getStreet(), customerRequest.getCurrentLivingAddress().getHouseNumber(),
+                        customerRequest.getCurrentLivingAddress().getPostalCode());
+
+                addressFieldsValidation(address);
                 foundCustomer.setCurrentLivingAddress(address);
             }
         }
@@ -72,30 +87,14 @@ public class CustomerService {
     }
 
     private boolean customerValidation(Customer customer) throws CustomerValidationException {
-        if ("".equals(customer.getFirstName()) || customer.getFirstName() == null || "".equals(customer.getLastName()) || customer.getLastName() == null) {
-            throw new CustomerValidationException("Customer first name or last name is empty!");
+        if ("".equals(customer.getFirstName()) || customer.getFirstName() == null) {
+            throw new CustomerValidationException("Customer first name is empty!");
+        }
+        if ("".equals(customer.getLastName()) || customer.getLastName() == null) {
+            throw new CustomerValidationException("Customer last name is empty!");
         }
         if (customer.getAge() < 18) {
             throw new CustomerValidationException("Customer age is smaller than 18!");
-        }
-        return true;
-    }
-
-    private boolean addressValidation(Address address) throws CustomerValidationException {
-        if ("".equals(address.getCountry()) || address.getCountry() == null) {
-            return false;
-        }
-        if ("".equals(address.getCity()) || address.getCity() == null) {
-            return false;
-        }
-        if ("".equals(address.getStreet()) || address.getStreet() == null) {
-            return false;
-        }
-        if ("".equals(address.getHouseNumber()) || address.getHouseNumber() == null) {
-            return false;
-        }
-        if ("".equals(address.getPostalCode()) || address.getPostalCode() == null) {
-            return false;
         }
         return true;
     }

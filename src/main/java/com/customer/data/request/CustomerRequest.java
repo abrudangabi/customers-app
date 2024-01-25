@@ -14,15 +14,7 @@ public class CustomerRequest implements Serializable {
 
     private Integer age;
 
-    private String country;
-
-    private String city;
-
-    private String street;
-
-    private String houseNumber;
-
-    private String postalCode;
+    private AddressRequest currentLivingAddress;
 
     public Long getId() {
         return id;
@@ -44,23 +36,7 @@ public class CustomerRequest implements Serializable {
         return age;
     }
 
-    public String getCountry() {
-        return country;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public String getHouseNumber() {
-        return houseNumber;
-    }
-
-    public String getPostalCode() {
-        return postalCode;
+    public AddressRequest getCurrentLivingAddress() {
+        return currentLivingAddress;
     }
 }

@@ -3,7 +3,6 @@ package com.customer.data.config;
 import ch.qos.logback.classic.Logger;
 import com.customer.data.entity.Address;
 import com.customer.data.entity.Customer;
-import com.customer.data.repository.AddressRepositoryJpa;
 import com.customer.data.repository.CustomerRepositoryJpa;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -18,7 +17,7 @@ class LoadDatabase {
     private static final Logger log = (Logger) LoggerFactory.getLogger(LoadDatabase.class);
 
     @Bean
-    CommandLineRunner initDatabase(CustomerRepositoryJpa customerRepositoryJpa, AddressRepositoryJpa addressRepositoryJpa) {
+    CommandLineRunner initDatabase(CustomerRepositoryJpa customerRepositoryJpa) {
 
         return args -> {
             Customer c1 = new Customer("Gabi", "Ab", "gabi@yahoo.com", 27);
