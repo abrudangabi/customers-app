@@ -14,6 +14,17 @@ public class AddressRequest implements Serializable {
 
     private String postalCode;
 
+    public AddressRequest() {
+    }
+
+    public AddressRequest(String country, String city, String street, String houseNumber, String postalCode) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+        this.houseNumber = houseNumber;
+        this.postalCode = postalCode;
+    }
+
     public String getCountry() {
         return country;
     }
