@@ -25,8 +25,16 @@ public class CustomerService {
     }
 
     public Customer addCustomer(CustomerRequest customerRequest) throws CustomerValidationException {
-        Customer customer = new Customer(customerRequest.getFirstName(), customerRequest.getLastName(), "", customerRequest.getAge());
+        Customer customer = new Customer(customerRequest.getId(), customerRequest.getFirstName(), customerRequest.getLastName(),
+                "", customerRequest.getAge());
         String email = customerRequest.getEmail();
+        Long id = customerRequest.getId();
+
+        Customer foundCustomer = getCustomerById(id);
+
+        if (foundCustomer != null) {
+            throw new CustomerValidationException("The customer with id " + id + " already exists");
+        }
 
         if (customerValidation(customer)) {
             AddressRequest addressRequest = customerRequest.getCurrentLivingAddress();
@@ -61,6 +69,9 @@ public class CustomerService {
         String email = customerRequest.getEmail();
         AddressRequest addressRequest = customerRequest.getCurrentLivingAddress();
 
+        if (foundCustomer == null) {
+            throw new CustomerValidationException("The customer with id " + customerRequest.getId() + " doesn't exists");
+        }
 
         if (!"".equals(email)) {
             foundCustomer.setEmail(email);
@@ -87,6 +98,9 @@ public class CustomerService {
     }
 
     private boolean customerValidation(Customer customer) throws CustomerValidationException {
+        if (customer.getId() == null || customer.getId() < 1) {
+            throw new CustomerValidationException("Customer id is incorrect!");
+        }
         if ("".equals(customer.getFirstName()) || customer.getFirstName() == null) {
             throw new CustomerValidationException("Customer first name is empty!");
         }

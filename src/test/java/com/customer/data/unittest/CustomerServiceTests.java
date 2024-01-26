@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
@@ -27,7 +26,6 @@ import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-@DataJpaTest
 @RunWith(SpringRunner.class)
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTests {
@@ -41,18 +39,13 @@ public class CustomerServiceTests {
     @Test
     public void getAllCustomersTest(){
         // given - precondition or setup
-
-        Customer customer = new Customer("Gabi", "Abrudan", "gabi@yahoo.com", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27);
         List<Customer> customerList = Arrays.asList(customer);
 
         when(repository.findAll()).thenReturn(customerList);
 
         // when -  action or the behaviour that we are going test
         List<Customer> result = customerService.getAll();
-
-        for (Customer c : result) {
-            System.out.println(c);
-        }
 
         // then - verify the output
         assertThat(result).isNotNull();
@@ -69,13 +62,12 @@ public class CustomerServiceTests {
         AddressRequest addressRequest = new AddressRequest();
         CustomerRequest customerRequest = new CustomerRequest(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressRequest);
 
-        Customer customer = new Customer("Gabi", "Abrudan", "gabi@yahoo.com", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27);
 
         when(repository.save(any(Customer.class))).thenReturn(customer);
 
         // when -  action or the behaviour that we are going test
         Customer result = customerService.addCustomer(customerRequest);
-        System.out.println(result);
 
         // then - verify the output
         assertThat(result).isNotNull();
@@ -93,14 +85,13 @@ public class CustomerServiceTests {
         CustomerRequest customerRequest = new CustomerRequest(1L, "Gabi", "Abrudan", "", 27, addressRequest);
 
         Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer("Gabi", "Abrudan", "", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", 27);
         customer.setCurrentLivingAddress(address);
 
         when(repository.save(any(Customer.class))).thenReturn(customer);
 
         // when -  action or the behaviour that we are going test
         Customer result = customerService.addCustomer(customerRequest);
-        System.out.println(result);
 
         // then - verify the output
         assertThat(result).isNotNull();
@@ -123,7 +114,7 @@ public class CustomerServiceTests {
         CustomerRequest customerRequest = new CustomerRequest(1L, "Gabi", "Abrudan", "", 27, addressRequest);
 
         Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer("Gabi", "Abrudan", "", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", 27);
         customer.setCurrentLivingAddress(address);
 
         Throwable exception = assertThrows(CustomerValidationException.class, () -> {
@@ -140,7 +131,7 @@ public class CustomerServiceTests {
         CustomerRequest customerRequest = new CustomerRequest(1L, "Gabi", "Abrudan", "", 27, addressRequest);
 
         Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer("Gabi", "Abrudan", "", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", 27);
         customer.setCurrentLivingAddress(address);
 
         Throwable exception = assertThrows(CustomerValidationException.class, () -> {
@@ -157,7 +148,7 @@ public class CustomerServiceTests {
         CustomerRequest customerRequest = new CustomerRequest(1L, "", "Abrudan", "gabi@yahoo.com", 27, addressRequest);
 
         Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer("Gabi", "Abrudan", "", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", 27);
         customer.setCurrentLivingAddress(address);
 
         Throwable exception = assertThrows(CustomerValidationException.class, () -> {
@@ -168,10 +159,28 @@ public class CustomerServiceTests {
     }
 
     @Test
+    public void addAlreadyExistingCustomerWithIdTest() throws CustomerValidationException {
+        // given - precondition or setup
+        AddressRequest addressRequest = new AddressRequest();
+        CustomerRequest customerRequest = new CustomerRequest(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressRequest);
+        CustomerRequest customerRequest2 = new CustomerRequest(1L, "Dani", "Bala", "dani@yahoo.com", 26, addressRequest);
+
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27);
+
+        when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
+
+        Throwable exception = assertThrows(CustomerValidationException.class, () -> {
+            customerService.addCustomer(customerRequest2);
+        });
+
+        assertEquals("The customer with id 1 already exists", exception.getMessage());
+    }
+
+    @Test
     public void getCustomerByIdTest(){
         // given - precondition or setup
 
-        Customer customer = new Customer("Gabi", "Abrudan", "gabi@yahoo.com", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27);
         List<Customer> customerList = Arrays.asList(customer);
 
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
@@ -190,7 +199,7 @@ public class CustomerServiceTests {
     public void getCustomerByFirstNameTest(){
         // given - precondition or setup
 
-        Customer customer = new Customer("Gabi", "Abrudan", "gabi@yahoo.com", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27);
         List<Customer> customerList = Arrays.asList(customer);
         String firstName = "Gabi";
 
@@ -198,10 +207,6 @@ public class CustomerServiceTests {
 
         // when -  action or the behaviour that we are going test
         List<Customer> result = customerService.getCustomerByName(firstName);
-
-        for (Customer c : result) {
-            System.out.println(c);
-        }
 
         // then - verify the output
         assertThat(result).isNotNull();
@@ -218,14 +223,13 @@ public class CustomerServiceTests {
         AddressRequest addressRequest = new AddressRequest();
         CustomerRequest customerRequest = new CustomerRequest(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressRequest);
 
-        Customer customer = new Customer("Gabi", "Abrudan", "gabi@yahoo.com", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27);
 
         when(repository.save(any(Customer.class))).thenReturn(customer);
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
 
         // when -  action or the behaviour that we are going test
         Customer result = customerService.updateCustomer(customerRequest);
-        System.out.println(result);
 
         // then - verify the output
         assertThat(result).isNotNull();
@@ -243,7 +247,7 @@ public class CustomerServiceTests {
         CustomerRequest customerRequest = new CustomerRequest(1L, "Gabi", "Abrudan", "", 27, addressRequest);
 
         Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer("Gabi", "Abrudan", "", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", 27);
         customer.setCurrentLivingAddress(address);
 
         when(repository.save(any(Customer.class))).thenReturn(customer);
@@ -251,7 +255,6 @@ public class CustomerServiceTests {
 
         // when -  action or the behaviour that we are going test
         Customer result = customerService.updateCustomer(customerRequest);
-        System.out.println(result);
 
         // then - verify the output
         assertThat(result).isNotNull();
@@ -274,7 +277,7 @@ public class CustomerServiceTests {
         CustomerRequest customerRequest = new CustomerRequest(1L, "Gabi", "Abrudan", "", 27, addressRequest);
 
         Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer("Gabi", "Abrudan", "", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", 27);
         customer.setCurrentLivingAddress(address);
 
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
@@ -293,7 +296,7 @@ public class CustomerServiceTests {
         CustomerRequest customerRequest = new CustomerRequest(1L, "Gabi", "Abrudan", "", 27, addressRequest);
 
         Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer("Gabi", "Abrudan", "", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", 27);
         customer.setCurrentLivingAddress(address);
 
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
@@ -311,14 +314,13 @@ public class CustomerServiceTests {
         AddressRequest addressRequest = null;
         CustomerRequest customerRequest = new CustomerRequest(1L, "Gabi", "", "gabi@yahoo.com", 27, addressRequest);
 
-        Customer customer = new Customer("Gabi", "Abrudan", "", 27);
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", 27);
 
         when(repository.save(any(Customer.class))).thenReturn(customer);
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
 
         // when -  action or the behaviour that we are going test
         Customer result = customerService.updateCustomer(customerRequest);
-        System.out.println(result);
 
         // then - verify the output
         assertThat(result).isNotNull();
@@ -327,6 +329,23 @@ public class CustomerServiceTests {
         assertThat(result.getEmail()).isEqualTo(customer.getEmail());
         assertThat(result.getAge()).isEqualTo(customer.getAge());
         assertThat(result.getCurrentLivingAddress()).isNull();
+    }
+
+    @Test
+    public void updateNotExistingCustomerWithIdTest() throws CustomerValidationException {
+        // given - precondition or setup
+        AddressRequest addressRequest = new AddressRequest();
+        CustomerRequest customerRequest = new CustomerRequest(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressRequest);
+
+        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27);
+
+        when(repository.findById(any(Long.class))).thenReturn(Optional.ofNullable(null));
+
+        Throwable exception = assertThrows(CustomerValidationException.class, () -> {
+            customerService.updateCustomer(customerRequest);
+        });
+
+        assertEquals("The customer with id 1 doesn't exists", exception.getMessage());
     }
 
 }

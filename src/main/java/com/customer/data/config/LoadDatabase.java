@@ -20,19 +20,19 @@ class LoadDatabase {
     CommandLineRunner initDatabase(CustomerRepositoryJpa customerRepositoryJpa) {
 
         return args -> {
-            Customer c1 = new Customer("Gabi", "Ab", "gabi@yahoo.com", 27);
+            Customer c1 = new Customer(1L, "Gabi", "Ab", "gabi@yahoo.com", 27);
             Address a1 = new Address("Rom", "Iasi", "Musatini", "5", "440077");
             c1.setCurrentLivingAddress(a1);
 
-            Customer c2 = new Customer("Dani", "Ab", "gabi@yahoo.com", 27);
+            Customer c2 = new Customer(2L, "Dani", "Ab", "gabi@yahoo.com", 27);
             Address a2 = new Address("Rom", "Iasi", "Musatini", "5", "440077");
             c2.setCurrentLivingAddress(a2);
 
-            Customer c3 = new Customer("Andrei", "Ab", "gabi@yahoo.com", 27);
+            Customer c3 = new Customer(3L, "Andrei", "Ab", "gabi@yahoo.com", 27);
             Address a3 = new Address("Rom", "Iasi", "Musatini", "5", "440077");
             c3.setCurrentLivingAddress(a3);
 
-            Customer c4 = new Customer("Mircea", "Ab", "gabi@yahoo.com", 27);
+            Customer c4 = new Customer(4L, "Mircea", "Ab", "gabi@yahoo.com", 27);
 
             log.info("Preloading " + customerRepositoryJpa.save(c1));
             log.info("Preloading " + customerRepositoryJpa.save(c2));
