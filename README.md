@@ -127,3 +127,16 @@ The {name} will be replaced with the first name or last name text of desired cus
 
 The 'test' profile runs on H2 in-memory database. To view and query the database you can browse to http://localhost:8090/h2-console. Default username is 'sa' with a blank password.
 
+## Running the application with Docker
+
+Move to application directory in Terminal and run these commands:
+
+```
+docker build --tag java-docker .
+```
+
+How to run the application from docker image to localhost:8080 :
+
+```
+docker run --publish 8080:8080 java-docker
+```
