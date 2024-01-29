@@ -16,7 +16,8 @@ class LoadDatabase {
 
     private static final Logger log = (Logger) LoggerFactory.getLogger(LoadDatabase.class);
 
-    @Bean
+    // todo: activate Bean for local testing
+//    @Bean
     CommandLineRunner initDatabase(CustomerRepositoryJpa customerRepositoryJpa) {
 
         return args -> {
