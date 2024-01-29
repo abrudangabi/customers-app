@@ -28,6 +28,7 @@ public class CustomerService {
         Customer customer = new Customer(customerRequest.getId(), customerRequest.getFirstName(), customerRequest.getLastName(),
                 "", customerRequest.getAge());
         String email = customerRequest.getEmail();
+        emailExists(email);
         Long id = customerRequest.getId();
 
         Customer foundCustomer = getCustomerById(id);
@@ -67,6 +68,7 @@ public class CustomerService {
         Customer foundCustomer = getCustomerById(customerRequest.getId());
 
         String email = customerRequest.getEmail();
+        emailExists(email);
         AddressRequest addressRequest = customerRequest.getCurrentLivingAddress();
 
         if (foundCustomer == null) {
@@ -95,6 +97,13 @@ public class CustomerService {
         List<Customer> customerList = customerRepository.findByFirstName(name);
         customerList.addAll(customerRepository.findByLastName(name));
         return customerList;
+    }
+
+    private void emailExists(String email) throws CustomerValidationException {
+        List<Customer> foundCustomer = customerRepository.findByEmail(email);
+        if (!foundCustomer.isEmpty()) {
+            throw new CustomerValidationException("This email already exists!");
+        }
     }
 
     private boolean customerValidation(Customer customer) throws CustomerValidationException {

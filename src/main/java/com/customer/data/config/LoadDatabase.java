@@ -24,15 +24,15 @@ class LoadDatabase {
             Address a1 = new Address("Rom", "Iasi", "Musatini", "5", "440077");
             c1.setCurrentLivingAddress(a1);
 
-            Customer c2 = new Customer(2L, "Dani", "Ab", "gabi@yahoo.com", 27);
+            Customer c2 = new Customer(2L, "Dani", "Ab", "dani@yahoo.com", 27);
             Address a2 = new Address("Rom", "Iasi", "Musatini", "5", "440077");
             c2.setCurrentLivingAddress(a2);
 
-            Customer c3 = new Customer(3L, "Andrei", "Ab", "gabi@yahoo.com", 27);
+            Customer c3 = new Customer(3L, "Andrei", "Ab", "andrei@yahoo.com", 27);
             Address a3 = new Address("Rom", "Iasi", "Musatini", "5", "440077");
             c3.setCurrentLivingAddress(a3);
 
-            Customer c4 = new Customer(4L, "Mircea", "Ab", "gabi@yahoo.com", 27);
+            Customer c4 = new Customer(4L, "Mircea", "Ab", "mircea@yahoo.com", 27);
 
             log.info("Preloading " + customerRepositoryJpa.save(c1));
             log.info("Preloading " + customerRepositoryJpa.save(c2));

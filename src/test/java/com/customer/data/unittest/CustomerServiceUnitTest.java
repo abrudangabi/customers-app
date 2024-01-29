@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RunWith(SpringRunner.class)
 @ExtendWith(MockitoExtension.class)
-public class CustomerServiceTests {
+public class CustomerServiceUnitTest {
 
     @Mock
     private CustomerRepositoryJpa repository;
@@ -174,6 +174,24 @@ public class CustomerServiceTests {
         });
 
         assertEquals("The customer with id 1 already exists", exception.getMessage());
+    }
+
+    @Test
+    public void addCustomersWithSameAddressTest() throws CustomerValidationException {
+        // given - precondition or setup
+        AddressRequest addressRequest = new AddressRequest();
+        CustomerRequest customerRequest = new CustomerRequest(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressRequest);
+
+        Customer customer = new Customer(1L, "David", "MMM", "gabi@yahoo.com", 27);
+        List<Customer> customerList = Arrays.asList(customer);
+
+        when(repository.findByEmail(any(String.class))).thenReturn(customerList);
+
+        Throwable exception = assertThrows(CustomerValidationException.class, () -> {
+            customerService.addCustomer(customerRequest);
+        });
+
+        assertEquals("This email already exists!", exception.getMessage());
     }
 
     @Test
