@@ -24,6 +24,12 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
+    // todo: lipsesc logurile
+    // todo: in loc de age salvez cu data nasterii
+    // todo: si mai adaug campurile createdBy, createDate ...
+    // todo: monitoring
+    // todo: adaugarea versiunii in url
+
     public Customer addCustomer(CustomerRequest customerRequest) throws CustomerValidationException {
         Customer customer = new Customer(customerRequest.getId(), customerRequest.getFirstName(), customerRequest.getLastName(),
                 "", customerRequest.getAge());
@@ -64,6 +70,7 @@ public class CustomerService {
         return customerOptional.orElse(null);
     }
 
+    /**/
     public Customer updateCustomer(CustomerRequest customerRequest) throws CustomerValidationException {
         Customer foundCustomer = getCustomerById(customerRequest.getId());
 
