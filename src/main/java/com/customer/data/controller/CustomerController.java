@@ -27,8 +27,8 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity addCustomer(@RequestBody CustomerRequest customer) throws CustomerValidationException {
-        return new ResponseEntity(this.customerService.addCustomer(customer), HttpStatus.OK);
+    public ResponseEntity<Customer> addCustomer(@RequestBody CustomerRequest customer) throws CustomerValidationException {
+        return new ResponseEntity(this.customerService.addCustomer(customer), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
