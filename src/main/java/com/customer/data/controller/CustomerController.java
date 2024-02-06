@@ -2,7 +2,6 @@ package com.customer.data.controller;
 
 import com.customer.data.controller.validation.DateValidator;
 import com.customer.data.controller.validation.DateValidatorUsingDateFormat;
-import com.customer.data.entity.Address;
 import com.customer.data.entity.Customer;
 import com.customer.data.exception.CustomerValidationException;
 import com.customer.data.request.AddressRequest;
@@ -37,6 +36,7 @@ public class CustomerController {
     public ResponseEntity<Customer> addCustomer(@RequestBody @Valid CustomerRequest customer) throws CustomerValidationException {
         customerValidation(customer);
         return new ResponseEntity<>(this.customerService.addCustomer(customer), HttpStatus.CREATED);
+
     }
 
     @GetMapping("/{id}")
@@ -56,11 +56,14 @@ public class CustomerController {
         return new ResponseEntity<>(this.customerService.getCustomerByName(name), HttpStatus.OK);
     }
 
-    private boolean customerValidation(CustomerRequest customer) throws CustomerValidationException {
+    private void customerValidation(CustomerRequest customer) throws CustomerValidationException {
         String birthDate = customer.getBirthDate();
-        DateValidator validator = new DateValidatorUsingDateFormat("yyyy-MM-dd");
+        String dateFormat = "yyyy-MM-dd";
+        DateValidator validator = new DateValidatorUsingDateFormat(dateFormat);
         isEmailAndAddressEmpty(customer.getEmail(), customer.getCurrentLivingAddress());
-        return validator.isValid(birthDate);
+        if (!validator.isValid(birthDate)) {
+            throw new CustomerValidationException("Birth date must be in " + dateFormat + " format");
+        }
     }
 
     private void isEmailAndAddressEmpty(String email, AddressRequest addressRequest) throws CustomerValidationException {

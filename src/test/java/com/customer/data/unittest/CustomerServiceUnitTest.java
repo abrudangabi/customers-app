@@ -43,7 +43,7 @@ public class CustomerServiceUnitTest {
     public void getAllCustomersTest(){
         // given - precondition or setup
         LocalDate date = LocalDate.of(1997, 1, 2);
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", date);
+        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
         List<Customer> customerList = Arrays.asList(customer);
 
         when(repository.findAll()).thenReturn(customerList);
@@ -68,7 +68,7 @@ public class CustomerServiceUnitTest {
         AddressRequest addressRequest = new AddressRequest();
         CustomerRequest customerRequest = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
 
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", date);
+        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
 
         when(repository.save(any(Customer.class))).thenReturn(customer);
 
@@ -92,8 +92,9 @@ public class CustomerServiceUnitTest {
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
         CustomerRequest customerRequest = new CustomerRequest("Gabi", "Abrudan", "", requestDate, addressRequest);
 
-        Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", date);
+        Address address = Address.builder().country("Rom").city("Iasi").street("Musatini").houseNumber("5").postalCode("440077").build();
+
+        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("").age(date).build();
         customer.setCurrentLivingAddress(address);
 
         when(repository.save(any(Customer.class))).thenReturn(customer);
@@ -183,7 +184,7 @@ public class CustomerServiceUnitTest {
 //        CustomerRequest customerRequest = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
 //        CustomerRequest customerRequest2 = new CustomerRequest("Dani", "Bala", "dani@yahoo.com", requestDate2, addressRequest);
 //
-//        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", date);
+//        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
 //
 //        when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
 //
@@ -202,7 +203,7 @@ public class CustomerServiceUnitTest {
         AddressRequest addressRequest = new AddressRequest();
         CustomerRequest customerRequest = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
 
-        Customer customer = new Customer(1L, "David", "MMM", "gabi@yahoo.com", date);
+        Customer customer = Customer.builder().id(1L).firstName("David").lastName("MMM").email("david@yahoo.com").age(date).build();
         List<Customer> customerList = Arrays.asList(customer);
 
         when(repository.findByEmail(any(String.class))).thenReturn(customerList);
@@ -215,11 +216,25 @@ public class CustomerServiceUnitTest {
     }
 
     @Test
+    public void addCustomersWithAgeBelow18Test() throws CustomerValidationException {
+        // given - precondition or setup
+        String requestDate = "2015-04-16";
+        AddressRequest addressRequest = new AddressRequest();
+        CustomerRequest customerRequest = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
+
+        Throwable exception = assertThrows(CustomerValidationException.class, () -> {
+            customerService.addCustomer(customerRequest);
+        });
+
+        assertEquals("Customer age is smaller than 18!", exception.getMessage());
+    }
+
+    @Test
     public void getCustomerByIdTest() throws CustomerValidationException {
         // given - precondition or setup
 
         LocalDate date = LocalDate.of(1997, 1, 2);
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", date);
+        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
         List<Customer> customerList = Arrays.asList(customer);
 
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
@@ -239,11 +254,11 @@ public class CustomerServiceUnitTest {
         // given - precondition or setup
 
         LocalDate date = LocalDate.of(1997, 1, 2);
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", date);
+        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
         List<Customer> customerList = Arrays.asList(customer);
         String firstName = "Gabi";
 
-        when(repository.findByFirstName(any(String.class))).thenReturn(customerList);
+        when(repository.findByFirstNameStartsWithIgnoreCaseOrLastNameStartsWithIgnoreCase(any(String.class), any(String.class))).thenReturn(customerList);
 
         // when -  action or the behaviour that we are going test
         List<Customer> result = customerService.getCustomerByName(firstName);
@@ -265,7 +280,7 @@ public class CustomerServiceUnitTest {
         AddressRequest addressRequest = new AddressRequest();
         CustomerUpdateRequest customerRequest = new CustomerUpdateRequest("gabi@yahoo.com", null);
 
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", date);
+        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
 
         when(repository.save(any(Customer.class))).thenReturn(customer);
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
@@ -290,8 +305,8 @@ public class CustomerServiceUnitTest {
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
         CustomerUpdateRequest customerRequest = new CustomerUpdateRequest("", addressRequest);
 
-        Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", date);
+        Address address = Address.builder().country("Rom").city("Iasi").street("Musatini").houseNumber("5").postalCode("440077").build();
+        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("").age(date).build();
         customer.setCurrentLivingAddress(address);
 
         when(repository.save(any(Customer.class))).thenReturn(customer);
@@ -322,8 +337,8 @@ public class CustomerServiceUnitTest {
         AddressRequest addressRequest = null;
         CustomerUpdateRequest customerRequest = new CustomerUpdateRequest("", addressRequest);
 
-        Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", null, null);
+        Address address = Address.builder().country("Rom").city("Iasi").street("Musatini").houseNumber("5").postalCode("440077").build();
+        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email(null).currentLivingAddress(null).build();
         customer.setCurrentLivingAddress(address);
 
         when(repository.save(any(Customer.class))).thenReturn(customer);
@@ -376,7 +391,7 @@ public class CustomerServiceUnitTest {
         AddressRequest addressRequest = null;
         CustomerUpdateRequest customerRequest = new CustomerUpdateRequest("gabi@yahoo.com", addressRequest);
 
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", date);
+        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("").age(date).build();
 
         when(repository.save(any(Customer.class))).thenReturn(customer);
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
@@ -401,7 +416,7 @@ public class CustomerServiceUnitTest {
         AddressRequest addressRequest = new AddressRequest();
         CustomerUpdateRequest customerRequest = new CustomerUpdateRequest("gabi@yahoo.com", addressRequest);
 
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", "gabi@yahoo.com", date);
+        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
 
         when(repository.findById(any(Long.class))).thenReturn(Optional.ofNullable(null));
 
@@ -409,7 +424,7 @@ public class CustomerServiceUnitTest {
             customerService.updateCustomer(customerRequest, 1L);
         });
 
-        assertEquals("The customer with id 1 doesn't exists", exception.getMessage());
+        assertEquals("The customer with id 1 doesn't exist", exception.getMessage());
     }
 
 }
