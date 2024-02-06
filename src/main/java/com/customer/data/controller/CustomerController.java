@@ -7,6 +7,7 @@ import com.customer.data.exception.CustomerValidationException;
 import com.customer.data.request.AddressRequest;
 import com.customer.data.request.CustomerRequest;
 import com.customer.data.request.CustomerUpdateRequest;
+import com.customer.data.response.CustomerResponse;
 import com.customer.data.service.CustomerService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -28,31 +29,31 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Customer>> retrieveAll() {
+    public ResponseEntity<List<CustomerResponse>> retrieveAll() {
         return new ResponseEntity<>(this.customerService.getAll(), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Customer> addCustomer(@RequestBody @Valid CustomerRequest customer) throws CustomerValidationException {
+    public ResponseEntity<CustomerResponse> addCustomer(@RequestBody @Valid CustomerRequest customer) throws CustomerValidationException {
         customerValidation(customer);
         return new ResponseEntity<>(this.customerService.addCustomer(customer), HttpStatus.CREATED);
 
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> retrieveById(@PathVariable @Min(1) Long id) throws CustomerValidationException {
+    public ResponseEntity<CustomerResponse> retrieveById(@PathVariable @Min(1) Long id) throws CustomerValidationException {
         return new ResponseEntity<>(this.customerService.getCustomerById(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> update(@RequestBody @Valid CustomerUpdateRequest customerRequest, @PathVariable @Valid Long id)
+    public ResponseEntity<CustomerResponse> update(@RequestBody @Valid CustomerUpdateRequest customerRequest, @PathVariable @Valid Long id)
             throws CustomerValidationException {
         isEmailAndAddressEmpty(customerRequest.getEmail(), customerRequest.getCurrentLivingAddress());
         return new ResponseEntity<>(this.customerService.updateCustomer(customerRequest, id), HttpStatus.OK);
     }
 
     @GetMapping("/name/{name}")
-    public ResponseEntity<List<Customer>> searchByFirstOrLastName(@PathVariable @NotBlank String name) {
+    public ResponseEntity<List<CustomerResponse>> searchByFirstOrLastName(@PathVariable @NotBlank String name) {
         return new ResponseEntity<>(this.customerService.getCustomerByName(name), HttpStatus.OK);
     }
 

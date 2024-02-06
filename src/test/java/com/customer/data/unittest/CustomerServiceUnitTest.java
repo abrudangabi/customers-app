@@ -7,6 +7,7 @@ import com.customer.data.repository.CustomerRepositoryJpa;
 import com.customer.data.request.AddressRequest;
 import com.customer.data.request.CustomerRequest;
 import com.customer.data.request.CustomerUpdateRequest;
+import com.customer.data.response.CustomerResponse;
 import com.customer.data.service.CustomerService;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,7 +50,7 @@ public class CustomerServiceUnitTest {
         when(repository.findAll()).thenReturn(customerList);
 
         // when -  action or the behaviour that we are going test
-        List<Customer> result = customerService.getAll();
+        List<CustomerResponse> result = customerService.getAll();
 
         // then - verify the output
         assertThat(result).isNotNull();
@@ -57,7 +58,7 @@ public class CustomerServiceUnitTest {
         assertThat(result.get(0).getFirstName()).isEqualTo(customer.getFirstName());
         assertThat(result.get(0).getLastName()).isEqualTo(customer.getLastName());
         assertThat(result.get(0).getEmail()).isEqualTo(customer.getEmail());
-        assertThat(result.get(0).getAge()).isEqualTo(customer.getAge());
+        assertThat(result.get(0).getAge()).isEqualTo(27);
     }
 
     @Test
@@ -73,14 +74,14 @@ public class CustomerServiceUnitTest {
         when(repository.save(any(Customer.class))).thenReturn(customer);
 
         // when -  action or the behaviour that we are going test
-        Customer result = customerService.addCustomer(customerRequest);
+        CustomerResponse result = customerService.addCustomer(customerRequest);
 
         // then - verify the output
         assertThat(result).isNotNull();
         assertThat(result.getFirstName()).isEqualTo(customer.getFirstName());
         assertThat(result.getLastName()).isEqualTo(customer.getLastName());
         assertThat(result.getEmail()).isEqualTo(customer.getEmail());
-        assertThat(result.getAge()).isEqualTo(customer.getAge());
+        assertThat(result.getAge()).isEqualTo(27);
         assertThat(result.getCurrentLivingAddress()).isNull();
     }
 
@@ -100,14 +101,14 @@ public class CustomerServiceUnitTest {
         when(repository.save(any(Customer.class))).thenReturn(customer);
 
         // when -  action or the behaviour that we are going test
-        Customer result = customerService.addCustomer(customerRequest);
+        CustomerResponse result = customerService.addCustomer(customerRequest);
 
         // then - verify the output
         assertThat(result).isNotNull();
         assertThat(result.getFirstName()).isEqualTo(customer.getFirstName());
         assertThat(result.getLastName()).isEqualTo(customer.getLastName());
         assertThat(result.getEmail()).isEqualTo("");
-        assertThat(result.getAge()).isEqualTo(customer.getAge());
+        assertThat(result.getAge()).isEqualTo(27);
         assertThat(result.getCurrentLivingAddress()).isNotNull();
         assertThat(result.getCurrentLivingAddress().getCountry()).isEqualTo(address.getCountry());
         assertThat(result.getCurrentLivingAddress().getCity()).isEqualTo(address.getCity());
@@ -240,13 +241,13 @@ public class CustomerServiceUnitTest {
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
 
         // when -  action or the behaviour that we are going test
-        Customer result = customerService.getCustomerById(1L);
+        CustomerResponse result = customerService.getCustomerById(1L);
 
         // then - verify the output
         assertThat(result.getFirstName()).isEqualTo(customer.getFirstName());
         assertThat(result.getLastName()).isEqualTo(customer.getLastName());
         assertThat(result.getEmail()).isEqualTo(customer.getEmail());
-        assertThat(result.getAge()).isEqualTo(customer.getAge());
+        assertThat(result.getAge()).isEqualTo(27);
     }
 
     @Test
@@ -261,7 +262,7 @@ public class CustomerServiceUnitTest {
         when(repository.findByFirstNameStartsWithIgnoreCaseOrLastNameStartsWithIgnoreCase(any(String.class), any(String.class))).thenReturn(customerList);
 
         // when -  action or the behaviour that we are going test
-        List<Customer> result = customerService.getCustomerByName(firstName);
+        List<CustomerResponse> result = customerService.getCustomerByName(firstName);
 
         // then - verify the output
         assertThat(result).isNotNull();
@@ -269,7 +270,7 @@ public class CustomerServiceUnitTest {
         assertThat(result.get(0).getFirstName()).isEqualTo(customer.getFirstName());
         assertThat(result.get(0).getLastName()).isEqualTo(customer.getLastName());
         assertThat(result.get(0).getEmail()).isEqualTo(customer.getEmail());
-        assertThat(result.get(0).getAge()).isEqualTo(customer.getAge());
+        assertThat(result.get(0).getAge()).isEqualTo(27);
     }
 
     @Test
@@ -286,14 +287,14 @@ public class CustomerServiceUnitTest {
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
 
         // when -  action or the behaviour that we are going test
-        Customer result = customerService.updateCustomer(customerRequest, 1L);
+        CustomerResponse result = customerService.updateCustomer(customerRequest, 1L);
 
         // then - verify the output
         assertThat(result).isNotNull();
         assertThat(result.getFirstName()).isEqualTo(customer.getFirstName());
         assertThat(result.getLastName()).isEqualTo(customer.getLastName());
         assertThat(result.getEmail()).isEqualTo(customer.getEmail());
-        assertThat(result.getAge()).isEqualTo(customer.getAge());
+        assertThat(result.getAge()).isEqualTo(27);
         assertThat(result.getCurrentLivingAddress()).isNull();
     }
 
@@ -313,14 +314,14 @@ public class CustomerServiceUnitTest {
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
 
         // when -  action or the behaviour that we are going test
-        Customer result = customerService.updateCustomer(customerRequest, 1L);
+        CustomerResponse result = customerService.updateCustomer(customerRequest, 1L);
 
         // then - verify the output
         assertThat(result).isNotNull();
         assertThat(result.getFirstName()).isEqualTo(customer.getFirstName());
         assertThat(result.getLastName()).isEqualTo(customer.getLastName());
         assertThat(result.getEmail()).isNull();
-        assertThat(result.getAge()).isEqualTo(customer.getAge());
+        assertThat(result.getAge()).isEqualTo(27);
         assertThat(result.getCurrentLivingAddress()).isNotNull();
         assertThat(result.getCurrentLivingAddress().getCountry()).isEqualTo(address.getCountry());
         assertThat(result.getCurrentLivingAddress().getCity()).isEqualTo(address.getCity());
@@ -338,19 +339,19 @@ public class CustomerServiceUnitTest {
         CustomerUpdateRequest customerRequest = new CustomerUpdateRequest("", addressRequest);
 
         Address address = Address.builder().country("Rom").city("Iasi").street("Musatini").houseNumber("5").postalCode("440077").build();
-        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email(null).currentLivingAddress(null).build();
+        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").age(date).email(null).currentLivingAddress(null).build();
         customer.setCurrentLivingAddress(address);
 
         when(repository.save(any(Customer.class))).thenReturn(customer);
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
 
-        Customer result = customerService.updateCustomer(customerRequest, 1L);
+        CustomerResponse result = customerService.updateCustomer(customerRequest, 1L);
 
         assertThat(result).isNotNull();
         assertThat(result.getFirstName()).isEqualTo(customer.getFirstName());
         assertThat(result.getLastName()).isEqualTo(customer.getLastName());
         assertThat(result.getEmail()).isNull();
-        assertThat(result.getAge()).isEqualTo(customer.getAge());
+        assertThat(result.getAge()).isEqualTo(27);
         assertThat(result.getCurrentLivingAddress()).isNull();
 
 //        when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
@@ -397,14 +398,14 @@ public class CustomerServiceUnitTest {
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
 
         // when -  action or the behaviour that we are going test
-        Customer result = customerService.updateCustomer(customerRequest, 1L);
+        CustomerResponse result = customerService.updateCustomer(customerRequest, 1L);
 
         // then - verify the output
         assertThat(result).isNotNull();
         assertThat(result.getFirstName()).isEqualTo(customer.getFirstName());
         assertThat(result.getLastName()).isEqualTo(customer.getLastName());
         assertThat(result.getEmail()).isEqualTo(customer.getEmail());
-        assertThat(result.getAge()).isEqualTo(customer.getAge());
+        assertThat(result.getAge()).isEqualTo(27);
         assertThat(result.getCurrentLivingAddress()).isNull();
     }
 

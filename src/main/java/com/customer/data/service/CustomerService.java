@@ -7,6 +7,8 @@ import com.customer.data.repository.CustomerRepositoryJpa;
 import com.customer.data.request.AddressRequest;
 import com.customer.data.request.CustomerRequest;
 import com.customer.data.request.CustomerUpdateRequest;
+import com.customer.data.response.AddressResponse;
+import com.customer.data.response.CustomerResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -31,8 +34,9 @@ public class CustomerService {
      * @return list of all customers
      */
     @Transactional(readOnly = true)
-    public List<Customer> getAll() {
-        return customerRepository.findAll();
+    public List<CustomerResponse> getAll() {
+        List<Customer> customerList = customerRepository.findAll();
+        return customerList.stream().map(this::createCustomerResponse).collect(Collectors.toList());
     }
 
     /**
@@ -42,7 +46,7 @@ public class CustomerService {
      * @throws CustomerValidationException the error message if the age of a customer is below 18 or the email already exists
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public Customer addCustomer(CustomerRequest customerRequest) throws CustomerValidationException {
+    public CustomerResponse addCustomer(CustomerRequest customerRequest) throws CustomerValidationException {
         LocalDate birthDate = LocalDate.parse(customerRequest.getBirthDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         verifyCustomerAge(birthDate);
 
@@ -65,23 +69,35 @@ public class CustomerService {
             customer.setCurrentLivingAddress(address);
         }
 
-        return customerRepository.save(customer);
+        Customer savedCustomer = customerRepository.save(customer);
+        return createCustomerResponse(savedCustomer);
     }
 
     /**
-     * Get customer by its id
+     * Find customer by its id in database
      * @param id - id for the searched customer
      * @return customer by its id
      * @throws CustomerValidationException the error message that the searched id doesn't exist
      */
     @Transactional(readOnly = true)
-    public Customer getCustomerById(Long id) throws CustomerValidationException {
+    private Customer findCustomerById(Long id) throws CustomerValidationException {
         Optional<Customer> customerOptional = customerRepository.findById(id);
         if (customerOptional.isPresent()) {
             return customerOptional.get();
         } else {
             throw new CustomerValidationException("The customer with id " + id + " doesn't exist");
         }
+    }
+
+    /**
+     * Get customer by its id
+     * @param id - id for the searched customer
+     * @return customer response by its id
+     * @throws CustomerValidationException the error message that the searched id doesn't exist
+     */
+    public CustomerResponse getCustomerById(Long id) throws CustomerValidationException {
+        Customer savedCustomer = findCustomerById(id);
+        return createCustomerResponse(savedCustomer);
     }
 
     /**
@@ -92,8 +108,8 @@ public class CustomerService {
      * @throws CustomerValidationException the error message if email already exists or customer cannot be found by id
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public Customer updateCustomer(CustomerUpdateRequest customerRequest, Long id) throws CustomerValidationException {
-        Customer foundCustomer = getCustomerById(id);
+    public CustomerResponse updateCustomer(CustomerUpdateRequest customerRequest, Long id) throws CustomerValidationException {
+        Customer foundCustomer = findCustomerById(id);
 
         String email = customerRequest.getEmail();
         emailExists(email);
@@ -115,7 +131,25 @@ public class CustomerService {
             foundCustomer.setCurrentLivingAddress(null);
         }
 
-        return customerRepository.save(foundCustomer);
+        Customer savedCustomer = customerRepository.save(foundCustomer);
+        return createCustomerResponse(savedCustomer);
+    }
+
+    /**
+     * Transform Customer object to CustomerResponse object
+     * @param customer - the Customer object
+     * @return the CustomerResponse object
+     */
+    private CustomerResponse createCustomerResponse(Customer customer) {
+        CustomerResponse response = CustomerResponse.builder().id(customer.getId()).firstName(customer.getFirstName()).lastName(customer.getLastName())
+                .email(customer.getEmail()).age(calculateAge(customer.getAge())).build();
+        if (customer.getCurrentLivingAddress() != null) {
+            AddressResponse addressResponse = AddressResponse.builder().country(customer.getCurrentLivingAddress().getCountry()).city(customer.getCurrentLivingAddress().getCity())
+                    .street(customer.getCurrentLivingAddress().getStreet()).houseNumber(customer.getCurrentLivingAddress().getHouseNumber())
+                    .postalCode(customer.getCurrentLivingAddress().getPostalCode()).build();
+            response.setCurrentLivingAddress(addressResponse);
+        }
+        return response;
     }
 
     /**
@@ -124,8 +158,9 @@ public class CustomerService {
      * @return list of searched customers
      */
     @Transactional(readOnly = true)
-    public List<Customer> getCustomerByName(String name) {
-        return customerRepository.findByFirstNameStartsWithIgnoreCaseOrLastNameStartsWithIgnoreCase(name, name);
+    public List<CustomerResponse> getCustomerByName(String name) {
+        List<Customer> customerList = customerRepository.findByFirstNameStartsWithIgnoreCaseOrLastNameStartsWithIgnoreCase(name, name);
+        return customerList.stream().map(this::createCustomerResponse).collect(Collectors.toList());
     }
 
     /**
@@ -148,12 +183,21 @@ public class CustomerService {
      * @throws CustomerValidationException the error message that the birthdate is below the age of 18 years
      */
     private void verifyCustomerAge(LocalDate birthDate) throws CustomerValidationException {
-        LocalDate now = LocalDate.now();
-        Period period = Period.between(birthDate, now);
-
-        int age = period.getYears();
+        int age = calculateAge(birthDate);
         if (age < 18) {
             throw new CustomerValidationException("Customer age is smaller than 18!");
         }
+    }
+
+    /**
+     * Calculate the age in years
+     * @param birthDate - the birthdate
+     * @return the age of the customer
+     */
+    private static int calculateAge(LocalDate birthDate) {
+        LocalDate now = LocalDate.now();
+        Period period = Period.between(birthDate, now);
+
+        return period.getYears();
     }
 }
