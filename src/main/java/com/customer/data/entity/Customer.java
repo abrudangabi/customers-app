@@ -2,10 +2,14 @@ package com.customer.data.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 public class Customer {
 
     @Id
+    @GeneratedValue
     private Long id;
 
     @Column(nullable = false)
@@ -18,14 +22,21 @@ public class Customer {
     private String email;
 
     @Column
-    private Integer age;
+    private LocalDate age;
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "address_id", nullable = true)
     private Address currentLivingAddress;
 
-    public Customer(Long id, String firstName, String lastName, String email, Integer age) {
+    public Customer(Long id, String firstName, String lastName, String email, LocalDate age) {
         this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.age = age;
+    }
+
+    public Customer(String firstName, String lastName, String email, LocalDate age) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -67,11 +78,11 @@ public class Customer {
         this.email = email;
     }
 
-    public Integer getAge() {
+    public LocalDate getAge() {
         return age;
     }
 
-    public void setAge(Integer age) {
+    public void setAge(LocalDate age) {
         this.age = age;
     }
 

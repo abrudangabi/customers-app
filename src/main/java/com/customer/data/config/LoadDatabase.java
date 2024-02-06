@@ -9,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.LocalDate;
 
 
 @Configuration
@@ -21,19 +22,20 @@ class LoadDatabase {
     CommandLineRunner initDatabase(CustomerRepositoryJpa customerRepositoryJpa) {
 
         return args -> {
-            Customer c1 = new Customer(1L, "Gabi", "Ab", "gabi@yahoo.com", 27);
+            LocalDate date = LocalDate.of(1997, 1, 2);
+            Customer c1 = new Customer(1L, "Gabi", "Ab", "gabi@yahoo.com", date);
             Address a1 = new Address("Rom", "Iasi", "Musatini", "5", "440077");
             c1.setCurrentLivingAddress(a1);
 
-            Customer c2 = new Customer(2L, "Dani", "Ab", "dani@yahoo.com", 27);
+            Customer c2 = new Customer(2L, "Dani", "Ab", "dani@yahoo.com", date);
             Address a2 = new Address("Rom", "Iasi", "Musatini", "5", "440077");
             c2.setCurrentLivingAddress(a2);
 
-            Customer c3 = new Customer(3L, "Andrei", "Ab", "andrei@yahoo.com", 27);
+            Customer c3 = new Customer(3L, "Andrei", "Ab", "andrei@yahoo.com", date);
             Address a3 = new Address("Rom", "Iasi", "Musatini", "5", "440077");
             c3.setCurrentLivingAddress(a3);
 
-            Customer c4 = new Customer(4L, "Mircea", "Ab", "mircea@yahoo.com", 27);
+            Customer c4 = new Customer(4L, "Mircea", "Ab", "mircea@yahoo.com", date);
 
             log.info("Preloading " + customerRepositoryJpa.save(c1));
             log.info("Preloading " + customerRepositoryJpa.save(c2));

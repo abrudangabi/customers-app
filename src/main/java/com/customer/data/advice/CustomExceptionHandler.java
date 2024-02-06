@@ -32,4 +32,20 @@ public class CustomExceptionHandler {
         map.put("errorMessage", exception.getMessage());
         return map;
     }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(RuntimeException.class)
+    public Map<String, String> handleRuntimeException(RuntimeException exception) {
+        Map<String, String> map =  new HashMap<>();
+        map.put("errorMessage", exception.getMessage());
+        return map;
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public Map<String, String> handleException(Exception exception) {
+        Map<String, String> map =  new HashMap<>();
+        map.put("errorMessage", exception.getMessage());
+        return map;
+    }
 }
