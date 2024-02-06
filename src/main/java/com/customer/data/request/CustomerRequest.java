@@ -1,35 +1,37 @@
 package com.customer.data.request;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class CustomerRequest implements Serializable {
 
-    Long id;
-
+    @NotBlank(message = "First name cannot be empty or null")
     private String firstName;
 
+    @NotBlank(message = "Last name cannot be empty or null")
     private String lastName;
 
+    @Email(message = "Email should be valid")
     private String email;
 
-    private Integer age;
+    private String birthDate;
 
+    @Valid
     private AddressRequest currentLivingAddress;
 
     public CustomerRequest() {
     }
 
-    public CustomerRequest(Long id, String firstName, String lastName, String email, Integer age, AddressRequest currentLivingAddress) {
-        this.id = id;
+    public CustomerRequest(String firstName, String lastName, String email, String birthDate, AddressRequest currentLivingAddress) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.age = age;
+        this.birthDate = birthDate;
         this.currentLivingAddress = currentLivingAddress;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getFirstName() {
@@ -44,8 +46,8 @@ public class CustomerRequest implements Serializable {
         return email;
     }
 
-    public Integer getAge() {
-        return age;
+    public String getBirthDate() {
+        return birthDate;
     }
 
     public AddressRequest getCurrentLivingAddress() {
