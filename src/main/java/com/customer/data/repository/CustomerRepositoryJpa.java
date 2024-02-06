@@ -9,9 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface CustomerRepositoryJpa extends JpaRepository<Customer, Long> {
-    @Override
-    Optional<Customer> findById(Long aLong);
-    List<Customer> findByFirstName(String firstName);
-    List<Customer> findByLastName(String lastName);
+    Optional<Customer> findById(Long id);
     List<Customer> findByEmail(String email);
+    List<Customer> findByFirstNameStartsWithIgnoreCaseOrLastNameStartsWithIgnoreCase(String firstName, String lastName);
 }
