@@ -2,11 +2,16 @@ package com.customer.data.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Builder
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CustomerRequest implements Serializable {
 
     @NotBlank(message = "First name cannot be empty or null")
@@ -22,35 +27,4 @@ public class CustomerRequest implements Serializable {
 
     @Valid
     private AddressRequest currentLivingAddress;
-
-    public CustomerRequest() {
-    }
-
-    public CustomerRequest(String firstName, String lastName, String email, String birthDate, AddressRequest currentLivingAddress) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.birthDate = birthDate;
-        this.currentLivingAddress = currentLivingAddress;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getBirthDate() {
-        return birthDate;
-    }
-
-    public AddressRequest getCurrentLivingAddress() {
-        return currentLivingAddress;
-    }
 }
