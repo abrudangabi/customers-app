@@ -2,9 +2,12 @@ package com.customer.data.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SourceType;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Builder
 @NoArgsConstructor
@@ -29,6 +32,12 @@ public class Customer {
 
     @Column
     private LocalDate age;
+
+    @CreationTimestamp(source = SourceType.DB)
+    private Instant createdOn;
+
+    @UpdateTimestamp(source = SourceType.DB)
+    private Instant lastUpdatedOn;
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "address_id", nullable = true)

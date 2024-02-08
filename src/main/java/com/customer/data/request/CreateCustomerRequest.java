@@ -5,14 +5,12 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerRequest implements Serializable {
+public class CreateCustomerRequest implements Serializable {
 
     @NotBlank(message = "First name cannot be empty or null")
     private String firstName;

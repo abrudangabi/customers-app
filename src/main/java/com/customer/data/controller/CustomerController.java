@@ -4,8 +4,8 @@ import com.customer.data.controller.validation.DateValidator;
 import com.customer.data.controller.validation.DateValidatorUsingDateFormat;
 import com.customer.data.exception.CustomerValidationException;
 import com.customer.data.request.AddressRequest;
-import com.customer.data.request.CustomerRequest;
-import com.customer.data.request.CustomerUpdateRequest;
+import com.customer.data.request.CreateCustomerRequest;
+import com.customer.data.request.UpdateCustomerRequest;
 import com.customer.data.response.CustomerResponse;
 import com.customer.data.service.CustomerService;
 import jakarta.validation.Valid;
@@ -37,7 +37,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerResponse> addCustomer(@RequestBody @Valid CustomerRequest customer) throws CustomerValidationException {
+    public ResponseEntity<CustomerResponse> addCustomer(@RequestBody @Valid CreateCustomerRequest customer) throws CustomerValidationException {
         customerValidation(customer);
         return new ResponseEntity<>(this.customerService.addCustomer(customer), HttpStatus.CREATED);
 
@@ -49,7 +49,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponse> update(@RequestBody @Valid CustomerUpdateRequest customerRequest, @PathVariable @Valid Long id)
+    public ResponseEntity<CustomerResponse> update(@RequestBody @Valid UpdateCustomerRequest customerRequest, @PathVariable @Valid Long id)
             throws CustomerValidationException {
         isEmailAndAddressEmpty(customerRequest.getEmail(), customerRequest.getCurrentLivingAddress());
         return new ResponseEntity<>(this.customerService.updateCustomer(customerRequest, id), HttpStatus.OK);
@@ -60,7 +60,7 @@ public class CustomerController {
         return new ResponseEntity<>(this.customerService.getCustomerByName(name), HttpStatus.OK);
     }
 
-    private void customerValidation(CustomerRequest customer) throws CustomerValidationException {
+    private void customerValidation(CreateCustomerRequest customer) throws CustomerValidationException {
         String birthDate = customer.getBirthDate();
         String dateFormat = "yyyy-MM-dd";
         DateValidator validator = new DateValidatorUsingDateFormat(dateFormat);

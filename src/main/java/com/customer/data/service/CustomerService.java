@@ -5,8 +5,8 @@ import com.customer.data.entity.Customer;
 import com.customer.data.exception.CustomerValidationException;
 import com.customer.data.repository.CustomerRepositoryJpa;
 import com.customer.data.request.AddressRequest;
-import com.customer.data.request.CustomerRequest;
-import com.customer.data.request.CustomerUpdateRequest;
+import com.customer.data.request.CreateCustomerRequest;
+import com.customer.data.request.UpdateCustomerRequest;
 import com.customer.data.response.AddressResponse;
 import com.customer.data.response.CustomerResponse;
 import org.springframework.stereotype.Service;
@@ -49,22 +49,22 @@ public class CustomerService {
     /**
      * Add a new customer in database
      *
-     * @param customerRequest - the customer to be saved in database
+     * @param createCustomerRequest - the customer to be saved in database
      * @return the saved customer
      * @throws CustomerValidationException the error message if the age of a customer is below 18 or the email already exists
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerResponse addCustomer(CustomerRequest customerRequest) throws CustomerValidationException {
+    public CustomerResponse addCustomer(CreateCustomerRequest createCustomerRequest) throws CustomerValidationException {
         logger.info("Save a customer.");
-        LocalDate birthDate = LocalDate.parse(customerRequest.getBirthDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate birthDate = LocalDate.parse(createCustomerRequest.getBirthDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         verifyCustomerAge(birthDate);
 
-        Customer customer = Customer.builder().firstName(customerRequest.getFirstName()).lastName(customerRequest.getLastName())
+        Customer customer = Customer.builder().firstName(createCustomerRequest.getFirstName()).lastName(createCustomerRequest.getLastName())
                 .age(birthDate).build();
-        String email = customerRequest.getEmail();
+        String email = createCustomerRequest.getEmail();
         emailExists(email);
 
-        AddressRequest addressRequest = customerRequest.getCurrentLivingAddress();
+        AddressRequest addressRequest = createCustomerRequest.getCurrentLivingAddress();
 
         if (email != null) {
             if (!email.isEmpty()) {
@@ -72,9 +72,9 @@ public class CustomerService {
             }
         }
         if (addressRequest != null) {
-            Address address = Address.builder().country(customerRequest.getCurrentLivingAddress().getCountry()).city(customerRequest.getCurrentLivingAddress().getCity())
-                    .street(customerRequest.getCurrentLivingAddress().getStreet()).houseNumber(customerRequest.getCurrentLivingAddress().getHouseNumber())
-                    .postalCode(customerRequest.getCurrentLivingAddress().getPostalCode()).build();
+            Address address = Address.builder().country(createCustomerRequest.getCurrentLivingAddress().getCountry()).city(createCustomerRequest.getCurrentLivingAddress().getCity())
+                    .street(createCustomerRequest.getCurrentLivingAddress().getStreet()).houseNumber(createCustomerRequest.getCurrentLivingAddress().getHouseNumber())
+                    .postalCode(createCustomerRequest.getCurrentLivingAddress().getPostalCode()).build();
             customer.setCurrentLivingAddress(address);
         }
 
@@ -106,7 +106,7 @@ public class CustomerService {
      * @throws CustomerValidationException the error message if email already exists or customer cannot be found by id
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerResponse updateCustomer(CustomerUpdateRequest customerRequest, Long id) throws CustomerValidationException {
+    public CustomerResponse updateCustomer(UpdateCustomerRequest customerRequest, Long id) throws CustomerValidationException {
         logger.info("Update the email or address from customer with id: " + id);
         Customer foundCustomer = findCustomerById(id);
 
@@ -130,9 +130,9 @@ public class CustomerService {
             foundCustomer.setCurrentLivingAddress(null);
         }
 
-        Customer savedCustomer = customerRepository.save(foundCustomer);
+        Customer updatedCustomer = customerRepository.save(foundCustomer);
         logger.info("The customer with id: " + id + " was updated.");
-        return createCustomerResponse(savedCustomer);
+        return createCustomerResponse(updatedCustomer);
     }
 
     /**
@@ -178,7 +178,7 @@ public class CustomerService {
     private CustomerResponse createCustomerResponse(Customer customer) {
         logger.info("Transform the Customer object in Customer Response object.");
         CustomerResponse response = CustomerResponse.builder().id(customer.getId()).firstName(customer.getFirstName()).lastName(customer.getLastName())
-                .email(customer.getEmail()).age(calculateAge(customer.getAge())).build();
+                .email(customer.getEmail()).age(calculateAge(customer.getAge())).createdOn(customer.getCreatedOn()).lastUpdatedOn(customer.getLastUpdatedOn()).build();
         if (customer.getCurrentLivingAddress() != null) {
             AddressResponse addressResponse = AddressResponse.builder().country(customer.getCurrentLivingAddress().getCountry()).city(customer.getCurrentLivingAddress().getCity())
                     .street(customer.getCurrentLivingAddress().getStreet()).houseNumber(customer.getCurrentLivingAddress().getHouseNumber())
