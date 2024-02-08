@@ -15,8 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CustomerControllerTest {
 
     @Autowired
-    private MockMvc mvc;
-
-    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
@@ -45,14 +40,10 @@ public class CustomerControllerTest {
     @Test
     void getAllCustomerControllerTest() throws Exception {
 
-        LocalDate date = LocalDate.of(1997, 1, 2);
-        String requestDate = "1997-01-02";
-        AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
         AddressResponse addressResponse = new AddressResponse();
-        CustomerRequest alex2 = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);;
-        CustomerResponse alex = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
+        CustomerResponse response = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
 
-        List<CustomerResponse> allEmployees = Arrays.asList(alex);
+        List<CustomerResponse> allEmployees = List.of(response);
 
         given(customerService.getAll()).willReturn(allEmployees);
 
@@ -61,7 +52,7 @@ public class CustomerControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<CustomerResponse> expectedResponseBody = Arrays.asList(alex);
+        List<CustomerResponse> expectedResponseBody = List.of(response);
         String actualResponseBody = mvcResult.getResponse().getContentAsString();
         assertThat(actualResponseBody).isEqualToIgnoringWhitespace(
                 objectMapper.writeValueAsString(expectedResponseBody));
@@ -71,106 +62,92 @@ public class CustomerControllerTest {
     @Test
     void addCustomerTest() throws Exception {
 
-        LocalDate date = LocalDate.of(1997, 1, 2);
         String requestDate = "1997-01-02";
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
         AddressResponse addressResponse = new AddressResponse();
-        CustomerRequest alex2 = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
-        CustomerResponse alex = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
+        CustomerRequest request = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
+        CustomerResponse response = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
 
-        List<CustomerResponse> allEmployees = Arrays.asList(alex);
-
-        given(customerService.addCustomer(any())).willReturn(alex);
+        given(customerService.addCustomer(any())).willReturn(response);
 
         MvcResult mvcResult = mockMvc.perform(post("/api/v1/customers")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(alex2)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        CustomerResponse expectedResponseBody = alex;
         String actualResponseBody = mvcResult.getResponse().getContentAsString();
         assertThat(actualResponseBody).isEqualToIgnoringWhitespace(
-                objectMapper.writeValueAsString(expectedResponseBody));
+                objectMapper.writeValueAsString(response));
 
     }
 
     @Test
     void updateCustomerTest() throws Exception {
 
-        LocalDate date = LocalDate.of(1997, 1, 2);
-        String requestDate = "1997-01-02";
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
         AddressResponse addressResponse = new AddressResponse();
-        CustomerUpdateRequest alex2 = new CustomerUpdateRequest("gabi@yahoo.com", addressRequest);
-        CustomerResponse alex = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
+        CustomerUpdateRequest request = new CustomerUpdateRequest("gabi@yahoo.com", addressRequest);
+        CustomerResponse response = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
 
-        List<CustomerResponse> allEmployees = Arrays.asList(alex);
-
-        given(customerService.updateCustomer(any(), any(Long.class))).willReturn(alex);
+        given(customerService.updateCustomer(any(), any(Long.class))).willReturn(response);
 
         MvcResult mvcResult = mockMvc.perform(put("/api/v1/customers/1")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(alex2)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        CustomerResponse expectedResponseBody = alex;
         String actualResponseBody = mvcResult.getResponse().getContentAsString();
         assertThat(actualResponseBody).isEqualToIgnoringWhitespace(
-                objectMapper.writeValueAsString(expectedResponseBody));
+                objectMapper.writeValueAsString(response));
 
     }
 
     @Test
     void getByCustomerIdTest() throws Exception {
 
-        LocalDate date = LocalDate.of(1997, 1, 2);
         String requestDate = "1997-01-02";
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
         AddressResponse addressResponse = new AddressResponse();
-        CustomerRequest alex2 = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
-        CustomerResponse alex = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
+        CustomerRequest request = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
+        CustomerResponse response = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
 
-        List<CustomerResponse> allEmployees = Arrays.asList(alex);
-
-        given(customerService.getCustomerById(any(Long.class))).willReturn(alex);
+        given(customerService.getCustomerById(any(Long.class))).willReturn(response);
 
         MvcResult mvcResult = mockMvc.perform(get("/api/v1/customers/1")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(alex2)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        CustomerResponse expectedResponseBody = alex;
         String actualResponseBody = mvcResult.getResponse().getContentAsString();
         assertThat(actualResponseBody).isEqualToIgnoringWhitespace(
-                objectMapper.writeValueAsString(expectedResponseBody));
+                objectMapper.writeValueAsString(response));
 
     }
 
     @Test
     void getByCustomerFirstNameOrLastNameTest() throws Exception {
 
-        LocalDate date = LocalDate.of(1997, 1, 2);
         String requestDate = "1997-01-02";
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
         AddressResponse addressResponse = new AddressResponse();
-        CustomerRequest alex2 = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
-        CustomerResponse alex = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
+        CustomerRequest request = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
+        CustomerResponse response = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
         String name = "gabi";
 
-        List<CustomerResponse> allEmployees = Arrays.asList(alex);
+        List<CustomerResponse> allEmployees = List.of(response);
 
         given(customerService.getCustomerByName(any())).willReturn(allEmployees);
 
         MvcResult mvcResult = mockMvc.perform(get("/api/v1/customers/name/" + name)
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(alex2)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<CustomerResponse> expectedResponseBody = Arrays.asList(alex);
+        List<CustomerResponse> expectedResponseBody = List.of(response);
         String actualResponseBody = mvcResult.getResponse().getContentAsString();
         assertThat(actualResponseBody).isEqualToIgnoringWhitespace(
                 objectMapper.writeValueAsString(expectedResponseBody));
@@ -180,17 +157,13 @@ public class CustomerControllerTest {
     @Test
     void addCustomerWithErrorTest() throws Exception {
 
-        LocalDate date = LocalDate.of(1997, 1, 2);
         String requestDate = "1997-01-02";
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
-        AddressResponse addressResponse = new AddressResponse();
-        CustomerRequest alex2 = new CustomerRequest("", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
-        CustomerResponse alex = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
-        String name = "gabi";
+        CustomerRequest request = new CustomerRequest("", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
 
         MvcResult mvcResult = mockMvc.perform(post("/api/v1/customers")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(alex2)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
