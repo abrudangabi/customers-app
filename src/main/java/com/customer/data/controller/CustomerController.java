@@ -2,7 +2,6 @@ package com.customer.data.controller;
 
 import com.customer.data.controller.validation.DateValidator;
 import com.customer.data.controller.validation.DateValidatorUsingDateFormat;
-import com.customer.data.entity.Customer;
 import com.customer.data.exception.CustomerValidationException;
 import com.customer.data.request.AddressRequest;
 import com.customer.data.request.CustomerRequest;
@@ -12,6 +11,8 @@ import com.customer.data.service.CustomerService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,8 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
+
+    protected static final Logger logger = LogManager.getLogger();
 
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
@@ -63,6 +66,7 @@ public class CustomerController {
         DateValidator validator = new DateValidatorUsingDateFormat(dateFormat);
         isEmailAndAddressEmpty(customer.getEmail(), customer.getCurrentLivingAddress());
         if (!validator.isValid(birthDate)) {
+            logger.error("Birth date must be in " + dateFormat + " format");
             throw new CustomerValidationException("Birth date must be in " + dateFormat + " format");
         }
     }
@@ -70,9 +74,11 @@ public class CustomerController {
     private void isEmailAndAddressEmpty(String email, AddressRequest addressRequest) throws CustomerValidationException {
         if (addressRequest == null) {
             if (email == null) {
+                logger.error("The customer email and living address are empty!");
                 throw new CustomerValidationException("Customer email and living address are empty!");
             }
             if (email.isBlank()) {
+                logger.error("The customer email and living address are empty!");
                 throw new CustomerValidationException("Customer email and living address are empty!");
             }
         }

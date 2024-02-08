@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +43,7 @@ public class CustomerServiceUnitTest {
         // given - precondition or setup
         LocalDate date = LocalDate.of(1997, 1, 2);
         Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
-        List<Customer> customerList = Arrays.asList(customer);
+        List<Customer> customerList = List.of(customer);
 
         when(repository.findAll()).thenReturn(customerList);
 
@@ -116,85 +115,6 @@ public class CustomerServiceUnitTest {
         assertThat(result.getCurrentLivingAddress().getPostalCode()).isEqualTo(address.getPostalCode());
     }
 
-    /*@Test
-    public void addCustomerEmptyAddressAndEmailTest() throws CustomerValidationException {
-        // given - precondition or setup
-        LocalDate date = LocalDate.of(1997, 1, 2);
-        String requestDate = "1997-01-02";
-        AddressRequest addressRequest = null;
-        CustomerRequest customerRequest = new CustomerRequest("Gabi", "Abrudan", "", requestDate, addressRequest);
-
-        Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", date);
-        customer.setCurrentLivingAddress(address);
-
-        Throwable exception = assertThrows(CustomerValidationException.class, () -> {
-            customerService.addCustomer(customerRequest);
-        });
-
-        assertEquals("Both email and address are empty!", exception.getMessage());
-    }*/
-
-    /*@Test
-    public void addCustomerEmptyCountryAddressAndEmailTest() throws CustomerValidationException {
-        // given - precondition or setup
-        LocalDate date = LocalDate.of(1997, 1, 2);
-        String requestDate = "1997-01-02";
-        AddressRequest addressRequest = new AddressRequest("", "Iasi", "Musatini", "5", "440077");
-        CustomerRequest customerRequest = new CustomerRequest("Gabi", "Abrudan", "", requestDate, addressRequest);
-
-        Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", date);
-        customer.setCurrentLivingAddress(address);
-
-        Throwable exception = assertThrows(CustomerValidationException.class, () -> {
-            customerService.addCustomer(customerRequest);
-        });
-
-        assertEquals("Customer country address is empty!", exception.getMessage());
-    }*/
-
-//    @Test
-//    public void addCustomerEmptyFirstNameTest() throws CustomerValidationException {
-//        // given - precondition or setup
-//        LocalDate date = LocalDate.of(1997, 1, 2);
-//        String requestDate = "1997-01-02";
-//        AddressRequest addressRequest = null;
-//        CustomerRequest customerRequest = new CustomerRequest("", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
-//
-//        Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-//        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", date);
-//        customer.setCurrentLivingAddress(address);
-//
-//        Throwable exception = assertThrows(CustomerValidationException.class, () -> {
-//            customerService.addCustomer(customerRequest);
-//        });
-//
-//        assertEquals("Customer first name is empty!", exception.getMessage());
-//    }
-
-//    @Test
-//    public void addAlreadyExistingCustomerWithIdTest() throws CustomerValidationException {
-//        // given - precondition or setup
-//        LocalDate date = LocalDate.of(1997, 1, 2);
-//        LocalDate date2 = LocalDate.of(1998, 2, 4);
-//        String requestDate = "1997-01-02";
-//        String requestDate2 = "1998-02-04";
-//        AddressRequest addressRequest = new AddressRequest();
-//        CustomerRequest customerRequest = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
-//        CustomerRequest customerRequest2 = new CustomerRequest("Dani", "Bala", "dani@yahoo.com", requestDate2, addressRequest);
-//
-//        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
-//
-//        when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
-//
-//        Throwable exception = assertThrows(CustomerValidationException.class, () -> {
-//            customerService.addCustomer(customerRequest2);
-//        });
-//
-//        assertEquals("The customer with id 1 already exists", exception.getMessage());
-//    }
-
     @Test
     public void addCustomersWithSameAddressTest() throws CustomerValidationException {
         // given - precondition or setup
@@ -204,7 +124,7 @@ public class CustomerServiceUnitTest {
         CustomerRequest customerRequest = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
 
         Customer customer = Customer.builder().id(1L).firstName("David").lastName("MMM").email("david@yahoo.com").age(date).build();
-        List<Customer> customerList = Arrays.asList(customer);
+        List<Customer> customerList = List.of(customer);
 
         when(repository.findByEmail(any(String.class))).thenReturn(customerList);
 
@@ -235,7 +155,6 @@ public class CustomerServiceUnitTest {
 
         LocalDate date = LocalDate.of(1997, 1, 2);
         Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
-        List<Customer> customerList = Arrays.asList(customer);
 
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
 
@@ -255,7 +174,7 @@ public class CustomerServiceUnitTest {
 
         LocalDate date = LocalDate.of(1997, 1, 2);
         Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
-        List<Customer> customerList = Arrays.asList(customer);
+        List<Customer> customerList = List.of(customer);
         String firstName = "Gabi";
 
         when(repository.findByFirstNameStartsWithIgnoreCaseOrLastNameStartsWithIgnoreCase(any(String.class), any(String.class))).thenReturn(customerList);
@@ -276,8 +195,6 @@ public class CustomerServiceUnitTest {
     public void updateCustomerWithoutAddressTest() throws CustomerValidationException {
         // given - precondition or setup
         LocalDate date = LocalDate.of(1997, 1, 2);
-        String requestDate = "1997-01-02";
-        AddressRequest addressRequest = new AddressRequest();
         CustomerUpdateRequest customerRequest = new CustomerUpdateRequest("gabi@yahoo.com", null);
 
         Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
@@ -301,7 +218,6 @@ public class CustomerServiceUnitTest {
     public void updateCustomerWithoutEmailTest() throws CustomerValidationException {
         // given - precondition or setup
         LocalDate date = LocalDate.of(1997, 1, 2);
-        String requestDate = "1997-01-02";
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
         CustomerUpdateRequest customerRequest = new CustomerUpdateRequest("", addressRequest);
 
@@ -333,7 +249,6 @@ public class CustomerServiceUnitTest {
     public void updateCustomerEmptyAddressAndEmailTest() throws CustomerValidationException {
         // given - precondition or setup
         LocalDate date = LocalDate.of(1997, 1, 2);
-        String requestDate = "1997-01-02";
         AddressRequest addressRequest = null;
         CustomerUpdateRequest customerRequest = new CustomerUpdateRequest("", addressRequest);
 
@@ -352,42 +267,12 @@ public class CustomerServiceUnitTest {
         assertThat(result.getEmail()).isNull();
         assertThat(result.getAge()).isEqualTo(27);
         assertThat(result.getCurrentLivingAddress()).isNull();
-
-//        when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
-//
-//        Throwable exception = assertThrows(CustomerValidationException.class, () -> {
-//            customerService.updateCustomer(customerRequest, 1L);
-//        });
-//
-//        assertEquals("Both email and address are empty!", exception.getMessage());
     }
-
-    /*@Test
-    public void updateCustomerEmptyCityAddressAndEmailTest() throws CustomerValidationException {
-        // given - precondition or setup
-        LocalDate date = LocalDate.of(1997, 1, 2);
-        String requestDate = "1997-01-02";
-        AddressRequest addressRequest = new AddressRequest("Rom", "", "Musatini", "5", "440077");
-        CustomerUpdateRequest customerRequest = new CustomerUpdateRequest("", addressRequest);
-
-        Address address = new Address("Rom", "Iasi", "Musatini", "5", "440077");
-        Customer customer = new Customer(1L, "Gabi", "Abrudan", "", date);
-        customer.setCurrentLivingAddress(address);
-
-        when(repository.findById(any(Long.class))).thenReturn(Optional.of(customer));
-
-        Throwable exception = assertThrows(CustomerValidationException.class, () -> {
-            customerService.updateCustomer(customerRequest, 1L);
-        });
-
-        assertEquals("Customer city address is empty!", exception.getMessage());
-    }*/
 
     @Test
     public void updateCustomerEmptyLastNameTest() throws CustomerValidationException {
         // given - precondition or setup
         LocalDate date = LocalDate.of(1997, 1, 2);
-        String requestDate = "1997-01-02";
         AddressRequest addressRequest = null;
         CustomerUpdateRequest customerRequest = new CustomerUpdateRequest("gabi@yahoo.com", addressRequest);
 
@@ -411,12 +296,8 @@ public class CustomerServiceUnitTest {
     @Test
     public void updateNotExistingCustomerWithIdTest() throws CustomerValidationException {
         // given - precondition or setup
-        LocalDate date = LocalDate.of(1997, 1, 2);
-        String requestDate = "1997-01-02";
         AddressRequest addressRequest = new AddressRequest();
         CustomerUpdateRequest customerRequest = new CustomerUpdateRequest("gabi@yahoo.com", addressRequest);
-
-        Customer customer = Customer.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com").age(date).build();
 
         when(repository.findById(any(Long.class))).thenReturn(Optional.ofNullable(null));
 
