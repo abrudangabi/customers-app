@@ -25,7 +25,7 @@ public class CustomExceptionHandler {
 
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomerValidationException.class)
     public Map<String, String> handleCustomerValidationException(CustomerValidationException exception) {
         Map<String, String> map =  new HashMap<>();

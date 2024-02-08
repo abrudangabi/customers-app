@@ -3,7 +3,7 @@ package com.customer.data.request;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 
-public class CustomerUpdateRequest {
+public class UpdateCustomerRequest {
 
     @Email(message = "Email should be valid")
     private String email;
@@ -11,7 +11,7 @@ public class CustomerUpdateRequest {
     @Valid
     private AddressRequest currentLivingAddress;
 
-    public CustomerUpdateRequest(String email, AddressRequest currentLivingAddress) {
+    public UpdateCustomerRequest(String email, AddressRequest currentLivingAddress) {
         this.email = email;
         this.currentLivingAddress = currentLivingAddress;
     }

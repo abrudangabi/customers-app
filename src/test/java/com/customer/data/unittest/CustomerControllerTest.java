@@ -2,8 +2,8 @@ package com.customer.data.unittest;
 
 import com.customer.data.controller.CustomerController;
 import com.customer.data.request.AddressRequest;
-import com.customer.data.request.CustomerRequest;
-import com.customer.data.request.CustomerUpdateRequest;
+import com.customer.data.request.CreateCustomerRequest;
+import com.customer.data.request.UpdateCustomerRequest;
 import com.customer.data.response.AddressResponse;
 import com.customer.data.response.CustomerResponse;
 import com.customer.data.service.CustomerService;
@@ -41,7 +41,8 @@ public class CustomerControllerTest {
     void getAllCustomerControllerTest() throws Exception {
 
         AddressResponse addressResponse = new AddressResponse();
-        CustomerResponse response = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
+        CustomerResponse response = CustomerResponse.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com")
+                .age(27).currentLivingAddress(addressResponse).build();
 
         List<CustomerResponse> allEmployees = List.of(response);
 
@@ -65,8 +66,9 @@ public class CustomerControllerTest {
         String requestDate = "1997-01-02";
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
         AddressResponse addressResponse = new AddressResponse();
-        CustomerRequest request = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
-        CustomerResponse response = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
+        CreateCustomerRequest request = new CreateCustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
+        CustomerResponse response = CustomerResponse.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com")
+                .age(27).currentLivingAddress(addressResponse).build();
 
         given(customerService.addCustomer(any())).willReturn(response);
 
@@ -87,8 +89,9 @@ public class CustomerControllerTest {
 
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
         AddressResponse addressResponse = new AddressResponse();
-        CustomerUpdateRequest request = new CustomerUpdateRequest("gabi@yahoo.com", addressRequest);
-        CustomerResponse response = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
+        UpdateCustomerRequest request = new UpdateCustomerRequest("gabi@yahoo.com", addressRequest);
+        CustomerResponse response = CustomerResponse.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com")
+                .age(27).currentLivingAddress(addressResponse).build();
 
         given(customerService.updateCustomer(any(), any(Long.class))).willReturn(response);
 
@@ -110,8 +113,9 @@ public class CustomerControllerTest {
         String requestDate = "1997-01-02";
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
         AddressResponse addressResponse = new AddressResponse();
-        CustomerRequest request = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
-        CustomerResponse response = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
+        CreateCustomerRequest request = new CreateCustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
+        CustomerResponse response = CustomerResponse.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com")
+                .age(27).currentLivingAddress(addressResponse).build();
 
         given(customerService.getCustomerById(any(Long.class))).willReturn(response);
 
@@ -133,8 +137,9 @@ public class CustomerControllerTest {
         String requestDate = "1997-01-02";
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
         AddressResponse addressResponse = new AddressResponse();
-        CustomerRequest request = new CustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
-        CustomerResponse response = new CustomerResponse(1L, "Gabi", "Abrudan", "gabi@yahoo.com", 27, addressResponse);
+        CreateCustomerRequest request = new CreateCustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
+        CustomerResponse response = CustomerResponse.builder().id(1L).firstName("Gabi").lastName("Abrudan").email("gabi@yahoo.com")
+                .age(27).currentLivingAddress(addressResponse).build();
         String name = "gabi";
 
         List<CustomerResponse> allEmployees = List.of(response);
@@ -155,11 +160,11 @@ public class CustomerControllerTest {
     }
 
     @Test
-    void addCustomerWithErrorTest() throws Exception {
+    void addCustomerWithEmptyFirstNameTest() throws Exception {
 
         String requestDate = "1997-01-02";
         AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
-        CustomerRequest request = new CustomerRequest("", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
+        CreateCustomerRequest request = new CreateCustomerRequest("", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
 
         MvcResult mvcResult = mockMvc.perform(post("/api/v1/customers")
                         .contentType("application/json")
@@ -169,6 +174,82 @@ public class CustomerControllerTest {
 
         Map<String, String> exceptionMessage = new HashMap<>();
         exceptionMessage.put("firstName", "First name cannot be empty or null");
+        String actualResponseBody = mvcResult.getResponse().getContentAsString();
+        String expectedResponseBody = objectMapper.writeValueAsString(exceptionMessage);
+        assertThat(actualResponseBody).isEqualToIgnoringWhitespace(expectedResponseBody);
+    }
+
+    @Test
+    void addCustomerWithEmptyEmailAndAddressTest() throws Exception {
+
+        String requestDate = "1997-01-02";
+        CreateCustomerRequest request = new CreateCustomerRequest("Gabi", "Abrudan", "", requestDate, null);
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/v1/customers")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        Map<String, String> exceptionMessage = new HashMap<>();
+        exceptionMessage.put("errorMessage", "Customer email and living address are empty!");
+        String actualResponseBody = mvcResult.getResponse().getContentAsString();
+        String expectedResponseBody = objectMapper.writeValueAsString(exceptionMessage);
+        assertThat(actualResponseBody).isEqualToIgnoringWhitespace(expectedResponseBody);
+    }
+
+    @Test
+    void addCustomerWithWrongDateFormatTest() throws Exception {
+
+        String requestDate = "1997/01/02";
+        AddressRequest addressRequest = new AddressRequest("Rom", "Iasi", "Musatini", "5", "440077");
+        CreateCustomerRequest request = new CreateCustomerRequest("Gabi", "Abrudan", "gabi@yahoo.com", requestDate, addressRequest);
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/v1/customers")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        Map<String, String> exceptionMessage = new HashMap<>();
+        exceptionMessage.put("errorMessage", "Birth date must be in yyyy-MM-dd format");
+        String actualResponseBody = mvcResult.getResponse().getContentAsString();
+        String expectedResponseBody = objectMapper.writeValueAsString(exceptionMessage);
+        assertThat(actualResponseBody).isEqualToIgnoringWhitespace(expectedResponseBody);
+    }
+
+    @Test
+    void updateCustomerWithEmptyEmailAndAddressTest() throws Exception {
+
+        UpdateCustomerRequest request = new UpdateCustomerRequest("", null);
+
+        MvcResult mvcResult = mockMvc.perform(put("/api/v1/customers/1")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        Map<String, String> exceptionMessage = new HashMap<>();
+        exceptionMessage.put("errorMessage", "Customer email and living address are empty!");
+        String actualResponseBody = mvcResult.getResponse().getContentAsString();
+        String expectedResponseBody = objectMapper.writeValueAsString(exceptionMessage);
+        assertThat(actualResponseBody).isEqualToIgnoringWhitespace(expectedResponseBody);
+    }
+
+    @Test
+    void updateCustomerWithWrongFieldsAddressTest() throws Exception {
+
+        AddressRequest addressRequest = new AddressRequest("Rom", "", "Musatini", "5", "440077");
+        UpdateCustomerRequest request = new UpdateCustomerRequest("", addressRequest);
+
+        MvcResult mvcResult = mockMvc.perform(put("/api/v1/customers/1")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        Map<String, String> exceptionMessage = new HashMap<>();
+        exceptionMessage.put("currentLivingAddress.city", "City cannot be empty or null");
         String actualResponseBody = mvcResult.getResponse().getContentAsString();
         String expectedResponseBody = objectMapper.writeValueAsString(exceptionMessage);
         assertThat(actualResponseBody).isEqualToIgnoringWhitespace(expectedResponseBody);
