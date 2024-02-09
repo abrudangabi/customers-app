@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = CustomerController.class)
-public class CustomerControllerTest {
+public class CustomerControllerUnitTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -250,6 +250,43 @@ public class CustomerControllerTest {
 
         Map<String, String> exceptionMessage = new HashMap<>();
         exceptionMessage.put("currentLivingAddress.city", "City cannot be empty or null");
+        String actualResponseBody = mvcResult.getResponse().getContentAsString();
+        String expectedResponseBody = objectMapper.writeValueAsString(exceptionMessage);
+        assertThat(actualResponseBody).isEqualToIgnoringWhitespace(expectedResponseBody);
+    }
+
+    @Test
+    void getCustomerWithIdBelow1Test() throws Exception {
+
+        AddressRequest addressRequest = new AddressRequest("Rom", "", "Musatini", "5", "440077");
+        UpdateCustomerRequest request = new UpdateCustomerRequest("", addressRequest);
+
+        MvcResult mvcResult = mockMvc.perform(get("/api/v1/customers/-1")
+                        .contentType("application/json"))
+                .andExpect(status().isInternalServerError())
+                .andReturn();
+
+        Map<String, String> exceptionMessage = new HashMap<>();
+        exceptionMessage.put("errorMessage", "400 BAD_REQUEST \"Validation failure\"");
+        String actualResponseBody = mvcResult.getResponse().getContentAsString();
+        String expectedResponseBody = objectMapper.writeValueAsString(exceptionMessage);
+        assertThat(actualResponseBody).isEqualToIgnoringWhitespace(expectedResponseBody);
+    }
+
+    @Test
+    void searchCustomerWithSpaceInNameTest() throws Exception {
+
+        AddressRequest addressRequest = new AddressRequest("Rom", "", "Musatini", "5", "440077");
+        UpdateCustomerRequest request = new UpdateCustomerRequest("", addressRequest);
+        String name = " ";
+
+        MvcResult mvcResult = mockMvc.perform(get("/api/v1/customers/name/" + name)
+                        .contentType("application/json"))
+                .andExpect(status().isInternalServerError())
+                .andReturn();
+
+        Map<String, String> exceptionMessage = new HashMap<>();
+        exceptionMessage.put("errorMessage", "400 BAD_REQUEST \"Validation failure\"");
         String actualResponseBody = mvcResult.getResponse().getContentAsString();
         String expectedResponseBody = objectMapper.writeValueAsString(exceptionMessage);
         assertThat(actualResponseBody).isEqualToIgnoringWhitespace(expectedResponseBody);

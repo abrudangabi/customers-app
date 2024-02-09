@@ -18,7 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @DataJpaTest
 @RunWith(SpringRunner.class)
 @ExtendWith(MockitoExtension.class)
-public class CustomerRepositoryTest {
+public class CustomerRepositoryUnitTest {
 
     @Autowired
     private CustomerRepositoryJpa customerRepositoryJpa;
