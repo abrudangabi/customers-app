@@ -28,7 +28,7 @@ https://customers-app.azurewebsites.net/customers  - for running from azure
 
 ### GET: endpoint to retrieve all customers from application database:
 ```
-https://customers-app.azurewebsites.net/customers
+https://customers-app.azurewebsites.net/api/v1/customers
 
 GET
 Accept: application/json
@@ -41,18 +41,17 @@ Content: list of customers
 
 ### POST: endpoint to add a customer to application database:
 ```
-https://customers-app.azurewebsites.net/customers
+https://customers-app.azurewebsites.net/api/v1/customers
 
 POST 
 Accept: application/json
 Content-Type: application/json
 
 {
-    "id": 1,
     "firstName": "First", 
     "lastName": "Last", 
     "email": "name@email.com", 
-    "age": 18,
+    "birthDate": "1997-02-05",
     "currentLivingAddress": {
             "country": "Country", 
             "city": "City", 
@@ -60,6 +59,7 @@ Content-Type: application/json
             "houseNumber": 1, 
             "postalCode": "code"
         }
+    
 }
 
 Response: HTTP 200
@@ -69,18 +69,14 @@ Content: the created customer
 
 ### PUT: endpoint to update only the email or address for a customer from application database:
 ```
-https://customers-app.azurewebsites.net/customers/update
+https://customers-app.azurewebsites.net/api/v1/customers/{id}
 
 PUT 
 Accept: application/json
 Content-Type: application/json
 
 {
-    "id": 1,
-    "firstName": "First", 
-    "lastName": "Last", 
     "email": "name@email.com", 
-    "age": 18,
     "currentLivingAddress": {
             "country": "Country", 
             "city": "City", 
@@ -88,16 +84,17 @@ Content-Type: application/json
             "houseNumber": 1, 
             "postalCode": "code"
         }
+    
 }
 
 Response: HTTP 200
-Content: the updates customer
+Content: the updated customer
 ```
 
 
 ### GET: endpoint to retrieve a customer by its id from application database:
 ```
-https://customers-app.azurewebsites.net/customers/{id}
+https://customers-app.azurewebsites.net/api/v1/customers/{id}
 
 GET
 Accept: application/json
@@ -111,7 +108,7 @@ The {id} will be replaced with the id number of desired customer to be retrieved
 
 ### GET: endpoint to search a customer by first name or last name from application database:
 ```
-https://customers-app.azurewebsites.net/customers/name/{name}
+https://customers-app.azurewebsites.net/api/v1/customers/name/{name}
 
 GET
 Accept: application/json
